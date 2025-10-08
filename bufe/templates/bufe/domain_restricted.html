@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hozzáférés megtagadva - Büfé</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css">
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <ul>
+                <li><a href="{% url 'authentication:index' %}"><strong>NodeWS</strong></a></li>
+            </ul>
+            <ul>
+                <li><a href="{% url 'authentication:logout' %}" role="button" class="outline">Kijelentkezés</a></li>
+            </ul>
+        </nav>
+
+        <article class="grid">
+            <div></div>
+            <div style="text-align: center;">
+                <hgroup>
+                    <h1>🚫 Hozzáférés megtagadva</h1>
+                    <p>A Büfé alkalmazás csak engedélyezett domain-ekkel rendelkező felhasználók számára elérhető</p>
+                </hgroup>
+
+                <div style="background-color: var(--pico-card-background-color); padding: 2rem; border-radius: 8px; margin: 2rem 0; text-align: left;">
+                    <h3>❌ Probléma:</h3>
+                    <p>Az Ön e-mail címe: <strong>{{ user_email }}</strong></p>
+                    <p>Jelenlegi domain: <strong class="pico-color-red-500">{{ user_domain }}</strong></p>
+                </div>
+
+                <div style="background-color: var(--pico-card-background-color); padding: 2rem; border-radius: 8px; margin: 2rem 0; text-align: left;">
+                    <h3>✅ Engedélyezett domain-ek:</h3>
+                    <ul>
+                        {% for domain in allowed_domains %}
+                            <li><strong class="pico-color-jade-500">@{{ domain }}</strong></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div style="background-color: var(--pico-background-color); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border-left: 4px solid var(--pico-color-jade-500);">
+                    <h4>💡 Megoldás:</h4>
+                    <p>A Büfé alkalmazás használatához az alábbi e-mail domain-ek egyikével kell rendelkeznie:</p>
+                    <ul style="margin: 1rem 0;">
+                        <li><strong>@szlgbp.hu</strong> - Kőbányai Szent László Gimnázium</li>
+                        <li><strong>@botond.eu</strong> - Tesztelési domain</li>
+                    </ul>
+                    <p>Kérjük, jelentkezzen be egy engedélyezett e-mail címmel, vagy forduljon a rendszer adminisztrátorához.</p>
+                </div>
+
+                <div style="margin: 2rem 0;">
+                    <a href="{% url 'authentication:logout' %}" role="button" class="secondary">Kijelentkezés</a>
+                    <a href="{% url 'authentication:index' %}" role="button" class="contrast">Vissza a főoldalra</a>
+                </div>
+            </div>
+            <div></div>
+        </article>
+
+        <footer style="text-align: center; margin-top: 3rem;">
+            <h6>Kőbányai Szent László Gimnázium</h6>
+            <p><small>Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.</small></p>
+        </footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Pico CSS with Jade theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <ul>
+                <li><strong>NodeWS</strong></li>
+            </ul>
+            <ul>
+                {% if user.is_authenticated %}
+                    <li>Üdvözöljük, {{ user.username }}!</li>
+                    <li><a href="{% url 'authentication:logout' %}" role="button" class="outline">Kijelentkezés</a></li>
+                {% else %}
+                    <li><a href="{% url 'authentication:login' %}" role="button" class="outline">Bejelentkezés</a></li>
+                    <li><a href="{% url 'authentication:register' %}" role="button">Regisztráció</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <header>
+            <hgroup>
+                <h1>{{ title }}</h1>
+                <p>Django ASGI alkalmazások gyűjteménye</p>
+            </hgroup>
+        </header>
+
+        <section class="grid">
+            {% for app in apps %}
+            <article>
+                <header>
+                    <h3>{{ app.name }}</h3>
+                </header>
+                <p>{{ app.description }}</p>
+                <footer>
+                    <span class="pico-background-grey-600">{{ app.status }}</span>
+                    <a href="{{ app.url }}" role="button" class="outline">Alkalmazás megtekintése</a>
+                </footer>
+            </article>
+            {% endfor %}
+        </section>
+
+        <footer>
+            <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--pico-muted-border-color);">
+                <h6>Kőbányai Szent László Gimnázium</h6>
+                <p><small>Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.</small></p>
+                <p><small>Django és Daphne ASGI • Pico CSS-sel készült</small></p>
+            </div>
+        </footer>
+    </main>
+</body>
+</html>

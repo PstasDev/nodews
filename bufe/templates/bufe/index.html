@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Büfé - NodeWS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <ul>
+                <li><a href="{% url 'authentication:index' %}"><strong>NodeWS</strong></a></li>
+            </ul>
+            <ul>
+                <li>Üdvözöljük, {{ user_full_name }}! ({{ user_domain }})</li>
+                <li><a href="{% url 'authentication:logout' %}" role="button" class="outline">Kijelentkezés</a></li>
+            </ul>
+        </nav>
+
+        <header>
+            <hgroup>
+                <h1>🍽️ Büfé Alkalmazás</h1>
+                <p>{{ welcome_message }}</p>
+            </hgroup>
+            
+            <div style="background-color: var(--pico-card-background-color); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                <small>
+                    ✅ <strong>Hozzáférés engedélyezve</strong> - 
+                    Ön jogosult e-mail domain-nel rendelkezik: <strong class="pico-color-jade-500">@{{ user_domain }}</strong>
+                </small>
+            </div>
+        </header>
+
+        <article>
+            <header>
+                <h2>🚧 Fejlesztés alatt</h2>
+            </header>
+            <p>Ez az alkalmazás jelenleg fejlesztés alatt áll. Hamarosan itt lesz elérhető az étterem kezelési és menü rendszer.</p>
+            
+            <h3>Tervezett funkciók:</h3>
+            <ul>
+                <li>📋 Menü kezelés</li>
+                <li>🛒 Rendelés kezelés</li>
+                <li>👥 Ügyfél kezelés</li>
+                <li>📊 Jelentések és statisztikák</li>
+            </ul>
+            
+            <footer>
+                <p><small>A funkciók folyamatosan bővülnek...</small></p>
+            </footer>
+        </article>
+
+        <footer style="text-align: center; margin-top: 3rem;">
+            <h6>Kőbányai Szent László Gimnázium</h6>
+            <p><small>Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.</small></p>
+        </footer>
+    </main>
+</body>
+</html>

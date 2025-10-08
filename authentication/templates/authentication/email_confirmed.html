@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-mail megerősítve - NodeWS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <ul>
+                <li><a href="{% url 'authentication:index' %}"><strong>NodeWS</strong></a></li>
+            </ul>
+            <ul>
+                <li><a href="{% url 'authentication:login' %}" role="button" class="outline">Bejelentkezés</a></li>
+            </ul>
+        </nav>
+
+        <article class="grid">
+            <div></div>
+            <div style="text-align: center;">
+                <hgroup>
+                    <h1>✅ E-mail megerősítve!</h1>
+                    <p>Fiókja sikeresen aktiválva lett</p>
+                </hgroup>
+
+                <p>Gratulálunk! E-mail címe sikeresen megerősítésre került, és fiókja most már aktív.</p>
+                
+                <div style="margin: 2rem 0;">
+                    <a href="{% url 'authentication:index' %}" role="button" class="contrast">Tovább a főoldalra</a>
+                </div>
+                
+                {% if not user.is_authenticated %}
+                <p><a href="{% url 'authentication:login' %}">Bejelentkezés</a></p>
+                {% endif %}
+            </div>
+            <div></div>
+        </article>
+
+        <footer style="text-align: center; margin-top: 3rem;">
+            <h6>Kőbányai Szent László Gimnázium</h6>
+            <p><small>Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.</small></p>
+        </footer>
+    </main>
+</body>
+</html>

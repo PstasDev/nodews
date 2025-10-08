@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regisztráció - NodeWS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css">
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <ul>
+                <li><a href="{% url 'authentication:index' %}"><strong>NodeWS</strong></a></li>
+            </ul>
+            <ul>
+                <li><a href="{% url 'authentication:login' %}" role="button" class="outline">Bejelentkezés</a></li>
+            </ul>
+        </nav>
+
+        <article class="grid">
+            <div></div>
+            <div>
+                <hgroup>
+                    <h1>Fiók létrehozása</h1>
+                    <p>Csatlakozzon a NodeWS platformhoz</p>
+                </hgroup>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="grid">
+                        <label for="{{ form.first_name.id_for_label }}">
+                            Keresztnév<span class="pico-color-red-500">*</span>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <small class="error">{{ form.first_name.errors|first }}</small>
+                            {% endif %}
+                        </label>
+
+                        <label for="{{ form.last_name.id_for_label }}">
+                            Vezetéknév<span class="pico-color-red-500">*</span>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <small class="error">{{ form.last_name.errors|first }}</small>
+                            {% endif %}
+                        </label>
+                    </div>
+
+                    <label for="{{ form.email.id_for_label }}">
+                        E-mail cím<span class="pico-color-red-500">*</span>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <small class="error">{{ form.email.errors|first }}</small>
+                        {% endif %}
+                    </label>
+
+                    <label for="{{ form.password1.id_for_label }}">
+                        Jelszó<span class="pico-color-red-500">*</span>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <small class="error">{{ form.password1.errors|first }}</small>
+                        {% endif %}
+                    </label>
+
+                    <label for="{{ form.password2.id_for_label }}">
+                        Jelszó megerősítése<span class="pico-color-red-500">*</span>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <small class="error">{{ form.password2.errors|first }}</small>
+                        {% endif %}
+                    </label>
+
+                    {% if form.non_field_errors %}
+                        <small class="error">{{ form.non_field_errors|first }}</small>
+                    {% endif %}
+
+                    <button type="submit" class="contrast">Fiók létrehozása</button>
+                </form>
+
+                <footer>
+                    <p>Már van fiókja? <a href="{% url 'authentication:login' %}">Jelentkezzen be</a></p>
+                </footer>
+            </div>
+            <div></div>
+        </article>
+
+        <footer style="text-align: center; margin-top: 3rem;">
+            <h6>Kőbányai Szent László Gimnázium</h6>
+            <p><small>Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.</small></p>
+        </footer>
+    </main>
+</body>
+</html>

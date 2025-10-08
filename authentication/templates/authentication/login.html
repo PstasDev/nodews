@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bejelentkezés - NodeWS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
+</head>
+<body>
+    <main class="container">
+        <nav>
+            <ul>
+                <li><a href="{% url 'authentication:index' %}"><strong>NodeWS</strong></a></li>
+            </ul>
+            <ul>
+                <li><a href="{% url 'authentication:register' %}" role="button" class="outline">Regisztráció</a></li>
+            </ul>
+        </nav>
+
+        <article class="grid">
+            <div></div>
+            <div>
+                <hgroup>
+                    <h1>Bejelentkezés</h1>
+                    <p>Üdvözöljük újra a NodeWS-ben</p>
+                </hgroup>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <label for="{{ form.email.id_for_label }}">
+                        E-mail cím
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <small class="error">{{ form.email.errors|first }}</small>
+                        {% endif %}
+                    </label>
+
+                    <label for="{{ form.password.id_for_label }}">
+                        Jelszó
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <small class="error">{{ form.password.errors|first }}</small>
+                        {% endif %}
+                    </label>
+
+                    {% if form.non_field_errors %}
+                        <small class="error">{{ form.non_field_errors|first }}</small>
+                    {% endif %}
+
+                    <button type="submit" class="contrast">Bejelentkezés</button>
+                </form>
+
+                <footer>
+                    <p>Nincs még fiókja? <a href="{% url 'authentication:register' %}">Hozzon létre egyet</a></p>
+                    
+                    {% if show_resend %}
+                    <div style="margin-top: 20px; padding: 15px; background-color: var(--pico-background-color); border-radius: 5px;">
+                        <p><strong>Fiókja nincs aktiválva?</strong></p>
+                        <form method="post" action="{% url 'authentication:resend_verification' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="email" value="{{ user_email }}">
+                            <button type="submit" class="outline">Megerősítő e-mail újraküldése</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </footer>
+            </div>
+            <div></div>
+        </article>
+
+        <footer style="text-align: center; margin-top: 3rem;">
+            <h6>Kőbányai Szent László Gimnázium</h6>
+            <p><small>Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.</small></p>
+        </footer>
+    </main>
+</body>
+</html>

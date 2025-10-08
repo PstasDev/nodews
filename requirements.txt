@@ -1,0 +1,16 @@
+Django>=4.2,<5.0
+daphne>=4.0.0
+channels>=4.0.0
+channels-redis>=4.0.0
+python-decouple>=3.8
+whitenoise>=6.5.0
+redis>=5.0.0
+django-cors-headers>=4.3.0
+django-ratelimit>=4.1.0
+djangorestframework>=3.14.0
+PyJWT>=2.8.0
+
+# Development dependencies (optional)
+django-debug-toolbar>=4.2.0
+black>=23.0.0
+flake8>=6.0.0

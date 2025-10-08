@@ -1,0 +1,45 @@
+# Django
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database
+db.sqlite3
+*.db
+
+# Static files
+/staticfiles/
+/static/
+
+# Media files
+/media/
+
+# VS Code
+.vscode/
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Redis dump
+dump.rdb
