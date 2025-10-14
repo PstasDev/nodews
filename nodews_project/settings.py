@@ -136,13 +136,13 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# WhiteNoise configuration for static files with Daphne
+# WhiteNoise configuration for static files with Daphne/ASGI
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -152,10 +152,11 @@ STORAGES = {
     },
 }
 
-# Additional WhiteNoise settings for better performance
+# Additional WhiteNoise settings for better performance and reliability
 WHITENOISE_USE_FINDERS = True  # Allow serving from STATICFILES_DIRS in development
 WHITENOISE_AUTOREFRESH = config('DEBUG', default=True, cast=bool)  # Auto-refresh in debug mode
 WHITENOISE_MANIFEST_STRICT = False  # Don't fail on missing files in manifest
+WHITENOISE_ALLOW_ALL_ORIGINS = True  # Allow CORS for static files if needed
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
