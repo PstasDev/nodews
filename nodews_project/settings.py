@@ -186,8 +186,9 @@ SESSION_COOKIE_AGE = config('SESSION_COOKIE_AGE', default=86400, cast=int)  # 24
 
 # CSRF security
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Strict'
+CSRF_COOKIE_HTTPONLY = False  # Changed to False to allow CSRF token to work properly
+CSRF_COOKIE_SAMESITE = 'Lax'  # Changed from Strict to Lax for better compatibility
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost:8000,http://127.0.0.1:8000', cast=lambda v: [s.strip() for s in v.split(',') if s.strip()])
 
 # Authentication settings
 LOGIN_URL = '/login/'

@@ -33,7 +33,7 @@
                     {% endfor %}
                 {% endif %}
 
-                <form method="post">
+                <form method="post" action="{% url 'authentication:login' %}">
                     {% csrf_token %}
                     
                     <label for="{{ form.email.id_for_label }}">

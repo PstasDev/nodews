@@ -43,10 +43,18 @@ def user_login(request):
             login(request, user)
             messages.success(request, f'Üdvözöljük újra, {user.first_name or user.username}!')
             return redirect('authentication:index')
+        else:
+            # Add form errors to messages for better visibility
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, error)
     else:
         form = CustomAuthenticationForm()
     
-    return render(request, 'authentication/login.html', {'form': form})
+    context = {
+        'form': form
+    }
+    return render(request, 'authentication/login.html', context)
 
 
 def user_register(request):
