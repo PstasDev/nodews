@@ -59,6 +59,41 @@
 
     <!-- Scripts -->
     <script src="{% static 'js/bufe.js' %}"></script>
+
+    <script>
+    (function reloadStaticOn404() {
+        const staticFiles = [
+            "{% static 'css/bufe.css' %}",
+            "{% static 'js/bufe.js' %}"
+        ];
+
+        function checkAndReload(url, elType) {
+            fetch(url, {cache: "reload"}).then(resp => {
+                if (resp.status === 404) {
+                    setTimeout(() => {
+                        if (elType === "css") {
+                            const links = document.querySelectorAll('link[href="' + url + '"]');
+                            links.forEach(link => {
+                                link.href = url + "?reload=" + Date.now();
+                            });
+                        } else if (elType === "js") {
+                            const scripts = document.querySelectorAll('script[src="' + url + '"]');
+                            scripts.forEach(script => {
+                                script.src = url + "?reload=" + Date.now();
+                            });
+                        }
+                        checkAndReload(url, elType);
+                    }, 2000);
+                }
+            });
+        }
+
+        staticFiles.forEach(url => {
+            if (url.endsWith(".css")) checkAndReload(url, "css");
+            if (url.endsWith(".js")) checkAndReload(url, "js");
+        });
+    })();
+    </script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>
