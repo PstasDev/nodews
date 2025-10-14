@@ -1,0 +1,101 @@
+{% extends 'bufe/base.html' %}
+
+{% block title %}Rendeléseim - Büfé{% endblock %}
+{% block meta_description %}Rendeléseim listája{% endblock %}
+{% block nav_orders_active %}active{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="card mb-lg">
+    <div class="card-body">
+        <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: var(--space-md);">
+            <div>
+                <h1 style="margin-bottom: var(--space-xs);">📋 Rendeléseim</h1>
+                <p class="text-muted" style="margin: 0;">{{ user_full_name }} rendelései</p>
+            </div>
+            <a href="{% url 'bufe:create_order' %}" class="btn btn-accent">+ Új rendelés</a>
+        </div>
+    </div>
+</div>
+
+<!-- Messages -->
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- Orders List -->
+{% if orders %}
+    {% for order in orders %}
+    <div class="card mb-md">
+        <div class="card-body">
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-lg); align-items: start;">
+                <!-- Order Info -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm);">
+                        <h3 style="margin: 0;">Rendelés #{{ order.id }}</h3>
+                        <span class="badge badge-{{ order.allapot }}">
+                            {{ order.get_allapot_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="order-meta" style="display: flex; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-sm);">
+                        <span class="order-meta-item">
+                            🕒 Leadva: {{ order.leadva|date:"Y.m.d H:i" }}
+                        </span>
+                        {% if order.idozitve %}
+                        <span class="order-meta-item">
+                            ⏰ Időzítve: {{ order.idozitve|date:"Y.m.d H:i" }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    {% if order.megjegyzes %}
+                    <div style="margin-top: var(--space-sm); padding: var(--space-sm); background: var(--gray-50); border-radius: var(--radius-md);">
+                        <small class="text-muted">💬 {{ order.megjegyzes|truncatewords:20 }}</small>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Order Total & Actions -->
+                <div style="text-align: right;">
+                    <div style="margin-bottom: var(--space-md);">
+                        <div class="text-muted" style="font-size: 0.875rem; margin-bottom: var(--space-xs);">Végösszeg</div>
+                        <div style="font-size: 1.75rem; font-weight: 700; color: var(--brand-accent);">
+                            {{ order.vegosszeg }} Ft
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                        <a href="{% url 'bufe:order_detail' order.id %}" class="btn btn-sm btn-primary">
+                            Részletek →
+                        </a>
+                        {% if order.allapot == 'leadva' %}
+                        <form method="post" action="{% url 'bufe:cancel_order' order.id %}"
+                              onsubmit="return confirm('Biztosan visszavonja a rendelést?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger w-full">
+                                Visszavonás
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<div class="card">
+    <div class="card-body text-center">
+        <div style="font-size: 4rem; margin-bottom: var(--space-md);">📭</div>
+        <h3>Még nincs rendelése</h3>
+        <p class="text-muted">Még nem adott le egyetlen rendelést sem. Kezdje el most!</p>
+        <a href="{% url 'bufe:create_order' %}" class="btn btn-accent">Első rendelés leadása</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

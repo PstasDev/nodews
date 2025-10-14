@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Büfé Admin - Rendelések</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>📋 Büfé Adminisztráció</h1>
+                <div class="header-info">
+                    <span class="user-name">{{user.last_name}} {{user.first_name}}</span>
+                    <span class="connection-status" id="connectionStatus">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Csatlakozás...</span>
+                    </span>
+                </div>
+            </div>
+            <nav class="admin-nav">
+                <a href="{% url 'bufe:admin_dashboard' %}" class="nav-link active">Rendelések</a>
+                <a href="{% url 'bufe:admin_menu_management' %}" class="nav-link">Menü kezelés</a>
+                <a href="{% url 'bufe:admin_opening_hours' %}" class="nav-link">Nyitvatartás</a>
+                <a href="{% url 'bufe:index' %}" class="nav-link">Büfé oldal</a>
+                <a href="/logout/" class="nav-link">Kijelentkezés</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Controls -->
+            <div class="controls-bar">
+                <div class="controls-left">
+                    <h2>Élő rendelések</h2>
+                    <span class="order-count" id="orderCount">0 rendelés</span>
+                </div>
+                <div class="controls-right">
+                    <button class="btn btn-secondary" id="refreshBtn">
+                        🔄 Frissítés
+                    </button>
+                    <button class="btn btn-danger" id="archiveAllBtn">
+                        📦 Összes kész archiválása
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">Összes</button>
+                <button class="filter-tab" data-filter="leadva">Leadva</button>
+                <button class="filter-tab" data-filter="visszaigasolva">Visszaigazolva</button>
+                <button class="filter-tab" data-filter="atadva">Kész</button>
+                <button class="filter-tab" data-filter="torolve">Törölve</button>
+                <button class="filter-tab" data-filter="visszavonva">Visszavonva</button>
+            </div>
+
+            <!-- Orders Grid -->
+            <div class="orders-grid" id="ordersGrid">
+                {% if active_orders %}
+                    {% for rendeles in active_orders %}
+                    <div class="order-card" data-order-id="{{ rendeles.id }}" data-status="{{ rendeles.allapot }}">
+                        <div class="order-header">
+                            <div class="order-number">#{{ rendeles.id }}</div>
+                            <div class="order-status status-{{ rendeles.allapot }}">
+                                {{ rendeles.get_allapot_display }}
+                            </div>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-user">
+                                <strong>{{ rendeles.user.last_name }} {{ rendeles.user.first_name }}</strong>
+                            </div>
+                            <div class="order-time">
+                                {{ rendeles.leadva|date:"Y.m.d H:i" }}
+                            </div>
+                            <div class="order-items-preview">
+                                {% for item in rendeles.items %}
+                                    {% if forloop.counter <= 3 %}
+                                        <span class="item-badge">{{ item.db }}x Termék #{{ item.termek_id }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if rendeles.items|length > 3 %}
+                                    <span class="item-badge">+{{ rendeles.items|length|add:"-3" }} további</span>
+                                {% endif %}
+                            </div>
+                            <div class="order-total">
+                                {{ rendeles.vegosszeg }} Ft
+                            </div>
+                            {% if rendeles.megjegyzes %}
+                            <div class="order-note">
+                                💬 {{ rendeles.megjegyzes }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="order-actions">
+                            {% if rendeles.allapot == 'leadva' %}
+                                <button class="btn-action btn-confirm" data-action="visszaigasolva">
+                                    ✓ Visszaigazol
+                                </button>
+                                <button class="btn-action btn-delete" data-action="torolve">
+                                    ✕ Töröl
+                                </button>
+                            {% elif rendeles.allapot == 'visszaigasolva' %}
+                                <button class="btn-action btn-done" data-action="atadva">
+                                    ✓✓ Kész
+                                </button>
+                                <button class="btn-action btn-delete" data-action="torolve">
+                                    ✕ Töröl
+                                </button>
+                            {% elif rendeles.allapot == 'atadva' %}
+                                <button class="btn-action btn-undo" data-action="visszaigasolva">
+                                    ↶ Visszavon
+                                </button>
+                                <button class="btn-action btn-archive" data-action="archive">
+                                    📦 Archivál
+                                </button>
+                            {% elif rendeles.allapot == 'torolve' %}
+                                <button class="btn-action btn-undo" data-action="visszaigasolva">
+                                    ↶ Visszaállít
+                                </button>
+                                <button class="btn-action btn-archive" data-action="archive">
+                                    📦 Archivál
+                                </button>
+                            {% elif rendeles.allapot == 'visszavonva' %}
+                                <button class="btn-action btn-undo" data-action="visszaigasolva">
+                                    ↶ Visszaállít
+                                </button>
+                                <button class="btn-action btn-archive" data-action="archive">
+                                    📦 Archivál
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-orders">
+                        <p>📭 Nincsenek aktív rendelések</p>
+                    </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Rendelés részletei</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Filled dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Archive Confirmation Modal -->
+    <div class="modal" id="archiveModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Archiválás megerősítése</h3>
+                <button class="modal-close" id="archiveModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Biztosan archiválni szeretné az összes kész rendelést?</p>
+                <p class="modal-warning">Ez a művelet nem vonható vissza!</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="archiveCancelBtn">Mégse</button>
+                    <button class="btn btn-danger" id="archiveConfirmBtn">Archiválás</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio element for notification sound -->
+    <audio id="notificationSound" preload="auto">
+        <source src="{% static 'sounds/notification.wav' %}" type="audio/wav">
+    </audio>
+
+    <script src="{% static 'js/admin.js' %}"></script>
+</body>
+</html>

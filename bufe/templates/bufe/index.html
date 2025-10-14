@@ -1,60 +1,129 @@
-<!DOCTYPE html>
-<html lang="hu" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Büfé - NodeWS</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
-</head>
-<body>
-    <main class="container">
-        <nav>
-            <ul>
-                <li><a href="{% url 'authentication:index' %}"><strong>NodeWS</strong></a></li>
-            </ul>
-            <ul>
-                <li>Üdvözöljük, {{ user_full_name }}! ({{ user_domain }})</li>
-                <li><a href="{% url 'authentication:logout' %}" role="button" class="outline">Kijelentkezés</a></li>
-            </ul>
-        </nav>
+{% extends 'bufe/base.html' %}
 
-        <header>
-            <hgroup>
-                <h1>🍽️ Büfé Alkalmazás</h1>
-                <p>{{ welcome_message }}</p>
-            </hgroup>
-            
-            <div style="background-color: var(--pico-card-background-color); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-                <small>
-                    ✅ <strong>Hozzáférés engedélyezve</strong> - 
-                    Ön jogosult e-mail domain-nel rendelkezik: <strong class="pico-color-jade-500">@{{ user_domain }}</strong>
-                </small>
+{% block title %}Büfé - NodeWS{% endblock %}
+{% block meta_description %}Büfé alkalmazás - Rendelés leadása{% endblock %}
+{% block nav_home_active %}active{% endblock %}
+
+{% block content %}
+<!-- Rendkívüli zárva Alert -->
+{% if bufe and bufe.rendkivuli_zarva %}
+<div class="card mb-lg" style="border: 3px solid #dc3545;">
+    <div class="card-body text-center" style="background-color: #f8d7da;">
+        <h1 style="color: #721c24; margin-bottom: 1rem;">🚫 A büfé rendkívüli okok miatt zárva tart</h1>
+        <p style="color: #721c24; font-size: 1.2rem; margin-bottom: 1.5rem;">
+            Jelenleg nem fogadunk el rendeléseket. Kérjük, nézzen vissza később.
+        </p>
+        {% if user.is_authenticated %}
+            {% load bufe_extras %}
+            {% if user|is_bufeadmin %}
+            <a href="{% url 'bufe:admin_dashboard' %}" class="btn btn-lg" style="background-color: #721c24; color: white;">
+                🔧 Admin felület megnyitása
+            </a>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% else %}
+<!-- Welcome Header -->
+<div class="card mb-lg position-relative"></div>
+    <!-- back to NodeWS button top left corner -->
+    <a href="/" class="btn btn-link position-absolute" style="top: 1rem; left: 1rem; margin: 0;">
+        ← NodeWS
+    </a>
+    <div class="card-body text-center">
+        <h1>{{ welcome_message }}</h1>
+        <p class="text-muted">{{ user_full_name }} ({{ user_domain }})</p>
+    </div>
+</div>
+
+<!-- Status Alert -->
+{% if bufe %}
+<div class="alert {% if is_open %}alert-success{% else %}alert-warning{% endif %}">
+    {% if is_open %}
+    <span style="font-size: 1.5rem;">✅</span>
+    <div>
+        <strong>A büfé jelenleg nyitva van</strong>
+        <br>
+        <small>Rendelését azonnal leadhatja és hamarosan átveheti.</small>
+    </div>
+    {% else %}
+    <span style="font-size: 1.5rem;">⚠️</span>
+    <div>
+        <strong>A büfé jelenleg zárva van</strong>
+        <br>
+        <small>Rendelését akkor veheti át, amikor a büfé újra kinyit.</small>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Quick Actions -->
+<div class="card mb-lg">
+    <div class="card-header">
+        <h2 style="margin: 0;">Gyors műveletek</h2>
+    </div>
+    <div class="card-body">
+        <div class="grid grid-2">
+            <div>
+                <h4>🛒 Új rendelés</h4>
+                <p class="text-muted">Rendeljen a büfé termékeinkből egyszerűen és gyorsan.</p>
+                <a href="{% url 'bufe:create_order' %}" class="btn btn-accent btn-lg w-full">Rendelés leadása</a>
             </div>
-        </header>
+            <div>
+                <h4>📋 Rendeléseim</h4>
+                <p class="text-muted">Tekintse meg aktív és korábbi rendeléseit.</p>
+                <a href="{% url 'bufe:my_orders' %}" class="btn btn-outline btn-lg w-full">Rendelések megtekintése</a>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <article>
-            <header>
-                <h2>🚧 Fejlesztés alatt</h2>
-            </header>
-            <p>Ez az alkalmazás jelenleg fejlesztés alatt áll. Hamarosan itt lesz elérhető az étterem kezelési és menü rendszer.</p>
+<!-- Recent Orders -->
+{% if recent_orders %}
+<div class="card">
+    <div class="card-header">
+        <div class="flex justify-between items-center">
+            <h2 style="margin: 0;">Legutóbbi rendelések</h2>
+            <a href="{% url 'bufe:my_orders' %}" class="btn btn-sm btn-outline">Összes megtekintése</a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% for order in recent_orders %}
+        <div class="order-card">
+            <div class="order-card-header">
+                <div>
+                    <div class="order-id">#{{ order.id }}</div>
+                    <div class="order-meta">
+                        <span class="order-meta-item">
+                            🕒 {{ order.leadva|date:"Y.m.d H:i" }}
+                        </span>
+                    </div>
+                </div>
+                <span class="order-status {{ order.allapot }}">
+                    {{ order.get_allapot_display }}
+                </span>
+            </div>
             
-            <h3>Tervezett funkciók:</h3>
-            <ul>
-                <li>📋 Menü kezelés</li>
-                <li>🛒 Rendelés kezelés</li>
-                <li>👥 Ügyfél kezelés</li>
-                <li>📊 Jelentések és statisztikák</li>
-            </ul>
+            <div class="order-total">
+                <span>Végösszeg:</span>
+                <span style="color: var(--brand-accent);">{{ order.vegosszeg }} Ft</span>
+            </div>
             
-            <footer>
-                <p><small>A funkciók folyamatosan bővülnek...</small></p>
-            </footer>
-        </article>
-
-        <footer style="text-align: center; margin-top: 3rem;">
-            <h6>Kőbányai Szent László Gimnázium</h6>
-            <p><small>Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.</small></p>
-        </footer>
-    </main>
-</body>
-</html>
+            <div class="order-actions">
+                <a href="{% url 'bufe:order_detail' order.id %}" class="btn btn-sm btn-primary">Részletek</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center">
+        <h3>Még nincs rendelése</h3>
+        <p class="text-muted">Kezdje el most! Adja le első rendelését a büféből.</p>
+        <a href="{% url 'bufe:create_order' %}" class="btn btn-accent">Első rendelés leadása</a>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

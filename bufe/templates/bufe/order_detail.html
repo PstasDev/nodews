@@ -1,0 +1,126 @@
+{% extends 'bufe/base.html' %}
+
+{% block title %}Rendelés #{{ rendeles.id }} - Büfé{% endblock %}
+{% block meta_description %}Rendelés részletei{% endblock %}
+
+{% block nav_items %}
+<li><a href="{% url 'bufe:my_orders' %}" class="nav-link">← Vissza</a></li>
+<li><a href="{% url 'bufe:create_order' %}" class="nav-link">Új rendelés</a></li>
+<li><a href="{% url 'bufe:my_orders' %}" class="nav-link">Rendeléseim</a></li>
+<li><a href="{% url 'authentication:logout' %}" class="nav-link">Kijelentkezés</a></li>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="card mb-lg">
+    <div class="card-body text-center">
+        <h1>📦 Rendelés #{{ rendeles.id }}</h1>
+        <p class="text-muted">Rendelés részletes információi</p>
+        <div style="margin-top: var(--space-md);">
+            <span class="order-status {{ rendeles.allapot }}" style="font-size: 1rem; padding: 0.5rem 1.25rem;">
+                {{ rendeles.get_allapot_display }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- Messages -->
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<div style="display: grid; gap: var(--space-lg); grid-template-columns: 1fr;">
+    <!-- Order Items -->
+    <div class="card">
+        <div class="card-header">
+            <h2 style="margin: 0;">📋 Rendelés tételei</h2>
+        </div>
+        <div class="card-body">
+            <div class="order-items">
+                {% for item in order_items %}
+                <div class="order-item">
+                    <div>
+                        {% if item.termek %}
+                        <div class="order-item-name">{{ item.termek.nev }}</div>
+                        <span class="order-item-quantity">{{ item.mennyiseg }} db × {{ item.termek.ar }} Ft</span>
+                        {% else %}
+                        <div class="order-item-name">Termék #{{ item.termek_id }} (törölt)</div>
+                        <span class="order-item-quantity">{{ item.mennyiseg }} db</span>
+                        {% endif %}
+                    </div>
+                    <div class="order-item-price">{{ item.osszeg }} Ft</div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="order-total">
+                <span>Végösszeg:</span>
+                <span style="color: var(--brand-accent);">{{ rendeles.vegosszeg }} Ft</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Information -->
+    <div class="card">
+        <div class="card-header">
+            <h2 style="margin: 0;">ℹ️ Rendelés információk</h2>
+        </div>
+        <div class="card-body">
+            <div style="display: grid; gap: var(--space-lg); grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div>
+                    <div style="font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-xs);">Rendelésszám</div>
+                    <div class="text-muted">#{{ rendeles.id }}</div>
+                </div>
+                <div>
+                    <div style="font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-xs);">Leadva</div>
+                    <div class="text-muted">{{ rendeles.leadva|date:"Y.m.d H:i" }}</div>
+                </div>
+                {% if rendeles.idozitve %}
+                <div>
+                    <div style="font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-xs);">Időzítve</div>
+                    <div class="text-muted">{{ rendeles.idozitve|date:"Y.m.d H:i" }}</div>
+                </div>
+                {% endif %}
+                <div>
+                    <div style="font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-xs);">Felhasználó</div>
+                    <div class="text-muted">{{ rendeles.user.get_full_name|default:rendeles.user.username }}</div>
+                </div>
+            </div>
+            
+            {% if rendeles.megjegyzes %}
+            <div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--gray-200);">
+                <div style="font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-sm);">Megjegyzés</div>
+                <div style="background: var(--gray-50); padding: var(--space-md); border-radius: var(--radius-md); color: var(--gray-700);">
+                    {{ rendeles.megjegyzes }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cancel Order -->
+    {% if rendeles.allapot == 'leadva' %}
+    <div class="card">
+        <div class="card-header">
+            <h2 style="margin: 0;">⚠️ Rendelés visszavonása</h2>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Ha mégse szeretné a rendelést, visszavonhatja azt az alábbi gombbal. A visszavont rendelés nem állítható vissza.</p>
+            <form method="post" action="{% url 'bufe:cancel_order' rendeles.id %}" onsubmit="return confirm('Biztosan visszavonja a rendelést? Ez a művelet nem vonható vissza.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Rendelés visszavonása</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Back Button -->
+<div style="margin-top: var(--space-xl); text-align: center;">
+    <a href="{% url 'bufe:my_orders' %}" class="btn btn-outline">← Vissza a rendelésekhez</a>
+</div>
+{% endblock %}

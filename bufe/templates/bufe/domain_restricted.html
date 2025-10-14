@@ -1,68 +1,78 @@
-<!DOCTYPE html>
-<html lang="hu" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hozzáférés megtagadva - Büfé</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.jade.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css">
-</head>
-<body>
-    <main class="container">
-        <nav>
-            <ul>
-                <li><a href="{% url 'authentication:index' %}"><strong>NodeWS</strong></a></li>
-            </ul>
-            <ul>
-                <li><a href="{% url 'authentication:logout' %}" role="button" class="outline">Kijelentkezés</a></li>
-            </ul>
-        </nav>
+{% extends 'bufe/base.html' %}
 
-        <article class="grid">
-            <div></div>
-            <div style="text-align: center;">
-                <hgroup>
-                    <h1>🚫 Hozzáférés megtagadva</h1>
-                    <p>A Büfé alkalmazás csak engedélyezett domain-ekkel rendelkező felhasználók számára elérhető</p>
-                </hgroup>
+{% block title %}Hozzáférés megtagadva - Büfé{% endblock %}
+{% block meta_description %}Hozzáférés megtagadva{% endblock %}
 
-                <div style="background-color: var(--pico-card-background-color); padding: 2rem; border-radius: 8px; margin: 2rem 0; text-align: left;">
-                    <h3>❌ Probléma:</h3>
-                    <p>Az Ön e-mail címe: <strong>{{ user_email }}</strong></p>
-                    <p>Jelenlegi domain: <strong class="pico-color-red-500">{{ user_domain }}</strong></p>
+{% block nav_items %}
+<li><a href="{% url 'authentication:index' %}" class="nav-link">← NodeWS</a></li>
+<li><a href="{% url 'authentication:logout' %}" class="nav-link">Kijelentkezés</a></li>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <!-- Error Header -->
+    <div class="card mb-lg">
+        <div class="card-body text-center">
+            <div style="font-size: 4rem; margin-bottom: var(--space-md);">🚫</div>
+            <h1>Hozzáférés megtagadva</h1>
+            <p class="text-muted">A Büfé alkalmazás csak engedélyezett domain-ekkel rendelkező felhasználók számára elérhető</p>
+        </div>
+    </div>
+
+    <!-- Problem Card -->
+    <div class="card mb-lg">
+        <div class="card-header">
+            <h3 style="margin: 0;">❌ Probléma</h3>
+        </div>
+        <div class="card-body">
+            <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                <div>
+                    <div style="font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-xs);">Az Ön e-mail címe</div>
+                    <div style="font-size: 1.125rem; color: var(--gray-700);">{{ user_email }}</div>
                 </div>
-
-                <div style="background-color: var(--pico-card-background-color); padding: 2rem; border-radius: 8px; margin: 2rem 0; text-align: left;">
-                    <h3>✅ Engedélyezett domain-ek:</h3>
-                    <ul>
-                        {% for domain in allowed_domains %}
-                            <li><strong class="pico-color-jade-500">@{{ domain }}</strong></li>
-                        {% endfor %}
-                    </ul>
-                </div>
-
-                <div style="background-color: var(--pico-background-color); padding: 1.5rem; border-radius: 8px; margin: 2rem 0; border-left: 4px solid var(--pico-color-jade-500);">
-                    <h4>💡 Megoldás:</h4>
-                    <p>A Büfé alkalmazás használatához az alábbi e-mail domain-ek egyikével kell rendelkeznie:</p>
-                    <ul style="margin: 1rem 0;">
-                        <li><strong>@szlgbp.hu</strong> - Kőbányai Szent László Gimnázium</li>
-                        <li><strong>@botond.eu</strong> - Tesztelési domain</li>
-                    </ul>
-                    <p>Kérjük, jelentkezzen be egy engedélyezett e-mail címmel, vagy forduljon a rendszer adminisztrátorához.</p>
-                </div>
-
-                <div style="margin: 2rem 0;">
-                    <a href="{% url 'authentication:logout' %}" role="button" class="secondary">Kijelentkezés</a>
-                    <a href="{% url 'authentication:index' %}" role="button" class="contrast">Vissza a főoldalra</a>
+                <div>
+                    <div style="font-weight: 600; color: var(--gray-900); margin-bottom: var(--space-xs);">Jelenlegi domain</div>
+                    <div style="font-size: 1.125rem; color: var(--error); font-weight: 600;">@{{ user_domain }}</div>
                 </div>
             </div>
-            <div></div>
-        </article>
+        </div>
+    </div>
 
-        <footer style="text-align: center; margin-top: 3rem;">
-            <h6>Kőbányai Szent László Gimnázium</h6>
-            <p><small>Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.</small></p>
-        </footer>
-    </main>
-</body>
-</html>
+    <!-- Allowed Domains Card -->
+    <div class="card mb-lg">
+        <div class="card-header">
+            <h3 style="margin: 0;">✅ Engedélyezett domain-ek</h3>
+        </div>
+        <div class="card-body">
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-sm);">
+                {% for domain in allowed_domains %}
+                <li style="padding: var(--space-md); background: var(--success-light); border-radius: var(--radius-md); font-size: 1.0625rem; font-weight: 600; color: var(--success);">
+                    @{{ domain }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Solution Card -->
+    <div class="alert alert-info">
+        <span style="font-size: 1.5rem;">💡</span>
+        <div>
+            <strong>Megoldás:</strong>
+            <br>
+            A Büfé alkalmazás használatához az alábbi e-mail domain-ek egyikével kell rendelkeznie:
+            <ul style="margin: var(--space-sm) 0; padding-left: var(--space-lg);">
+                <li><strong>@szlgbp.hu</strong> - Kőbányai Szent László Gimnázium</li>
+                <li><strong>@botond.eu</strong> - Tesztelési domain</li>
+            </ul>
+            <small>Kérjük, jelentkezzen be egy engedélyezett e-mail címmel, vagy forduljon a rendszer adminisztrátorához.</small>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap; margin-top: var(--space-xl);">
+        <a href="{% url 'authentication:logout' %}" class="btn btn-outline">Kijelentkezés</a>
+        <a href="{% url 'authentication:index' %}" class="btn btn-primary">Vissza a főoldalra</a>
+    </div>
+</div>
+{% endblock %}

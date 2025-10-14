@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.template.response import TemplateResponse
 from functools import wraps
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 # Allowed email domains for Büfé access
@@ -147,3 +149,63 @@ class DomainPermissionMixin:
                 )
         
         return super().dispatch(request, *args, **kwargs)
+
+
+def is_bufeadmin(user):
+    """
+    Check if a user is a bufeadmin.
+    
+    Args:
+        user: Django User object
+        
+    Returns:
+        bool: True if user is a bufeadmin, False otherwise
+    """
+    if not user or not user.is_authenticated:
+        return False
+    
+    from .models import Bufe
+    try:
+        bufe = Bufe.objects.first()
+        if not bufe:
+            return False
+        return bufe.bufeadmin.filter(id=user.id).exists()
+    except Exception:
+        return False
+
+
+def bufeadmin_required(view_func):
+    """
+    Decorator that restricts access to bufeadmin users only.
+    """
+    @wraps(view_func)
+    @login_required
+    def _wrapped_view(request, *args, **kwargs):
+        if not is_bufeadmin(request.user):
+            messages.error(request, 'Nincs jogosultsága a büfé adminisztrációs felület eléréséhez.')
+            return redirect('bufe:index')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
+def broadcast_order_update(order_data, action='new'):
+    """
+    Broadcast order update to all connected bufeadmin WebSocket clients.
+    
+    Args:
+        order_data (dict): Order data to broadcast
+        action (str): Action type - 'new', 'update', 'delete'
+    """
+    channel_layer = get_channel_layer()
+    if channel_layer:
+        try:
+            async_to_sync(channel_layer.group_send)(
+                'bufe_orders',
+                {
+                    'type': 'order_update',
+                    'action': action,
+                    'order': order_data
+                }
+            )
+        except Exception as e:
+            print(f"Error broadcasting order update: {e}")

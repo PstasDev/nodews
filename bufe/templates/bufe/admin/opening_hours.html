@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Büfé Admin - Nyitvatartás</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>🕒 Nyitvatartás kezelése</h1>
+                <div class="header-info">
+                    <span class="user-name">{{ user.last_name }} {{ user.first_name }}</span>
+                </div>
+            </div>
+            <nav class="admin-nav">
+                <a href="{% url 'bufe:admin_dashboard' %}" class="nav-link">Rendelések</a>
+                <a href="{% url 'bufe:admin_menu_management' %}" class="nav-link">Menü kezelés</a>
+                <a href="{% url 'bufe:admin_opening_hours' %}" class="nav-link active">Nyitvatartás</a>
+                <a href="{% url 'bufe:index' %}" class="nav-link">Büfé oldal</a>
+                <a href="/logout/" class="nav-link">Kijelentkezés</a>
+            </nav>
+        </header>
+
+        <main class="admin-main">
+            <div class="controls-bar">
+                <h2>Nyitvatartási idő</h2>
+                <div class="emergency-close">
+                    <label class="switch">
+                        <input type="checkbox" id="rendkivuliZarva" 
+                               {% if bufe.rendkivuli_zarva %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                    <span>Rendkívüli zárva</span>
+                </div>
+            </div>
+
+            <div class="opening-hours-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nap</th>
+                            <th>Nyitás</th>
+                            <th>Zárás</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% regroup opening_hours by weekday as days_list %}
+                        {% for day in days_list %}
+                        <tr>
+                            <td><strong>{{ day.list.0.get_weekday_display }}</strong></td>
+                            <td colspan="2">
+                                {% for oh in day.list %}
+                                <div class="time-slot">
+                                    <input type="time" 
+                                           class="inline-edit-time"
+                                           data-oh-id="{{ oh.id }}" 
+                                           data-field="from_hour"
+                                           value="{{ oh.from_hour|time:'H:i' }}">
+                                    <span>-</span>
+                                    <input type="time" 
+                                           class="inline-edit-time"
+                                           data-oh-id="{{ oh.id }}" 
+                                           data-field="to_hour"
+                                           value="{{ oh.to_hour|time:'H:i' }}">
+                                </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box">
+                <p>💡 <strong>Tipp:</strong> Módosításkor automatikusan mentődik az érték.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/opening_hours.js' %}"></script>
+</body>
+</html>

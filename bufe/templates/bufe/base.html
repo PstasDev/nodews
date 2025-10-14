@@ -1,0 +1,64 @@
+{% load static %}
+{% load bufe_extras %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Büfé alkalmazás - NodeWS{% endblock %}">
+    
+    <!-- Noto Sans Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Büfé Custom Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/bufe.css' %}">
+    
+    <!-- Extra Styles -->
+    {% block extra_styles %}{% endblock %}
+    
+    <title>{% block title %}Büfé - NodeWS{% endblock %}</title>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="navbar-brand">
+                <a href="{% url 'bufe:index' %}" class="select-none"><span>🍽️</span> Büfé</a>
+            </div>
+            <ul class="navbar-nav">
+                {% block nav_items %}
+                <li><a href="{% url 'bufe:create_order' %}" class="nav-link {% block nav_create_active %}{% endblock %}">Új rendelés</a></li>
+                <li><a href="{% url 'bufe:my_orders' %}" class="nav-link {% block nav_orders_active %}{% endblock %}">Rendeléseim</a></li>
+                {% if user|is_bufeadmin %}
+                <li><a href="{% url 'bufe:admin_dashboard' %}" class="nav-link {% block nav_admin_active %}{% endblock %}">Admin</a></li>
+                {% endif %}
+                <li><a href="{% url 'authentication:logout' %}" class="nav-link">Kijelentkezés</a></li>
+                {% endblock %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container section">
+        {% block content %}
+        <!-- Content will be inserted here -->
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: var(--space-xl) 0; margin-top: var(--space-xl); border-top: 1px solid var(--gray-200);">
+        <div class="container">
+            <h6 style="margin-bottom: var(--space-sm); color: var(--gray-900);">Kőbányai Szent László Gimnázium</h6>
+            <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">
+                Az oldal és alkalmazások a Kőbányai Szent László Gimnázium Informatika Tagozatának diákjai által készültek.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/bufe.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

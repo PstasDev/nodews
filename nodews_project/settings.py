@@ -11,7 +11,16 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+try:
+    from decouple import config
+except ImportError:
+    # Fallback if decouple is not installed
+    def config(key, default=None, cast=None):
+        import os
+        value = os.environ.get(key, default)
+        if cast and value is not None:
+            return cast(value)
+        return value
 from datetime import timedelta
 import os
 
@@ -115,13 +124,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'hu-hu'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Budapest'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -139,20 +148,22 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Channels configuration
+# Use InMemoryChannelLayer for development (no Redis required)
+# For production with multiple servers, switch to Redis
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [config('REDIS_URL', default='redis://localhost:6379')],
-        },
-    },
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
 }
 
-# For development without Redis, you can use InMemoryChannelLayer
+# For production with Redis, use this configuration:
 # CHANNEL_LAYERS = {
 #     'default': {
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer'
-#     }
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [config('REDIS_URL', default='redis://localhost:6379')],
+#         },
+#     },
 # }
 
 # Security settings for production (future auth.szlg.info)

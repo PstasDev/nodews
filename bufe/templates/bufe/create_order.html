@@ -1,0 +1,371 @@
+{% extends 'bufe/base.html' %}
+
+{% block title %}Új rendelés - Büfé{% endblock %}
+{% block meta_description %}Új rendelés leadása{% endblock %}
+{% block nav_create_active %}active{% endblock %}
+
+{% block extra_styles %}
+<style>
+    @media (min-width: 1024px) {
+        .order-grid { grid-template-columns: 2fr 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Rendkívüli zárva Alert -->
+{% if bufe and bufe.rendkivuli_zarva %}
+<div class="card mb-lg" style="border: 3px solid #dc3545;">
+    <div class="card-body text-center" style="background-color: #f8d7da;">
+        <h1 style="color: #721c24; margin-bottom: 1rem;">🚫 A büfé rendkívüli okok miatt zárva tart</h1>
+        <p style="color: #721c24; font-size: 1.2rem; margin-bottom: 1.5rem;">
+            Jelenleg nem fogadunk el rendeléseket. Kérjük, nézzen vissza később.
+        </p>
+        {% if user.is_authenticated %}
+            {% load bufe_extras %}
+            {% if user|is_bufeadmin %}
+            <a href="{% url 'bufe:admin_dashboard' %}" class="btn btn-lg" style="background-color: #721c24; color: white;">
+                🔧 Admin felület megnyitása
+            </a>
+            {% endif %}
+        {% endif %}
+        <br><br>
+        <a href="{% url 'bufe:index' %}" class="btn btn-outline">← Vissza a főoldalra</a>
+    </div>
+</div>
+{% else %}
+<div class="card mb-lg">
+    <div class="card-body">
+        <h1>🛒 Új rendelés leadása</h1>
+        <p class="text-muted">Válassza ki a kívánt termékeket</p>
+    </div>
+</div>
+
+{% if not is_open %}
+<div class="alert alert-warning">
+    <span style="font-size: 1.5rem;">⚠️</span>
+    <div><strong>Figyelem!</strong> A büfé jelenleg zárva van.</div>
+</div>
+{% endif %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<form method="post" id="orderForm">
+    {% csrf_token %}
+    <div class="order-grid" style="display: grid; gap: var(--space-lg);">
+        <div>
+            {% if termekek_by_kategoria %}
+            {% for kategoria, termekek in termekek_by_kategoria.items %}
+            <div class="card mb-lg">
+                <div class="card-header"><h3 style="margin:0;">{{ kategoria.nev }}</h3></div>
+                <div class="card-body">
+                    <div class="grid grid-2">
+                        {% for termek in termekek %}
+                        <div class="product-card">
+                            <div class="product-name">{{ termek.nev }}</div>
+                            <div class="product-price">{{ termek.ar }} Ft</div>
+                            {% if termek.leiras %}<div class="product-description">{{ termek.leiras }}</div>{% endif %}
+                            <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap; margin-bottom: var(--space-md);">
+                                {% if termek.hutve %}<span class="badge badge-info">❄️ Hűtve</span>{% endif %}
+                                {% if termek.kisult %}<span class="badge badge-warning">⚠️ Kisült</span>{% endif %}
+                                <span class="badge badge-gray">Max {{ termek.max_rendelesenkent }} db</span>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="quantity_{{ termek.id }}">Mennyiség</label>
+                                <input type="number" name="quantity_{{ termek.id }}" id="quantity_{{ termek.id }}" class="form-control quantity-input" min="0" max="{{ termek.max_rendelesenkent }}" value="0" data-price="{{ termek.ar }}" data-name="{{ termek.nev }}">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="card">
+                <div class="card-header"><h3 style="margin:0;">📝 Rendelés részletei</h3></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.szunet_valasztas.id_for_label }}">{{ form.szunet_valasztas.label }}</label>
+                        {{ form.szunet_valasztas }}
+                        {% if form.szunet_valasztas.help_text %}
+                        <small class="text-muted">{{ form.szunet_valasztas.help_text }}</small>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.idozitve.id_for_label }}">{{ form.idozitve.label }} <span style="color: var(--danger);">*</span></label>
+                        <div style="display: flex; gap: var(--space-sm);">
+                            {{ form.idozitve }}
+                            <button type="button" class="btn btn-secondary" id="todayButton" title="Mai dátum kitöltése">📅 Ma</button>
+                        </div>
+                        <small class="text-muted">Legalább 10 perccel a jelenlegi időpont után kell lennie</small>
+                        <div id="openingHoursWarning" style="display: none; margin-top: 0.5rem; padding: 0.5rem; background: var(--warning); border-radius: var(--border-radius); color: #000;">
+                            ⚠️ A kiválasztott időpont a büfé nyitvatartási idején kívül esik!
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" for="{{ form.megjegyzes.id_for_label }}">{{ form.megjegyzes.label }}</label>
+                        {{ form.megjegyzes }}
+                    </div>
+                    {% if form.errors %}
+                    <div class="alert alert-error mt-md">
+                        {% for field, errors in form.errors.items %}
+                        {% for error in errors %}<p>{{ error }}</p>{% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>Jelenleg nincsenek elérhető termékek</h3>
+                    <p class="text-muted">Kérjük, próbálja újra később.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if termekek_by_kategoria %}
+        <div>
+            <div class="card" style="position: sticky; top: calc(var(--space-md) + 60px);">
+                <div class="card-header"><h3 style="margin:0;">📋 Kosár</h3></div>
+                <div class="card-body">
+                    <div id="cartItems" style="min-height: 100px;">
+                        <p class="text-muted text-center"><em>A kosár üres</em></p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="order-total">
+                        <span>Végösszeg:</span>
+                        <span id="totalPrice" style="color: var(--brand-accent);">0 Ft</span>
+                    </div>
+                    <button type="submit" class="btn btn-accent btn-lg w-full mt-md" id="submitButton" disabled>Rendelés leadása</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</form>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+{% if not bufe.rendkivuli_zarva %}
+<script>
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    const cartItemsDiv = document.getElementById('cartItems');
+    const totalPriceSpan = document.getElementById('totalPrice');
+    const submitButton = document.getElementById('submitButton');
+    const breakSelect = document.getElementById('id_szunet_valasztas');
+    const datetimeInput = document.getElementById('id_idozitve');
+    const todayButton = document.getElementById('todayButton');
+    const openingHoursWarning = document.getElementById('openingHoursWarning');
+    const orderForm = document.getElementById('orderForm');
+    
+    // Store opening hours
+    let openingHoursData = null;
+    
+    // Fetch opening hours from API
+    fetch('{% url "bufe:api_opening_hours" %}')
+        .then(response => response.json())
+        .then(data => {
+            openingHoursData = data;
+            console.log('Opening hours loaded:', data);
+        })
+        .catch(error => console.error('Error loading opening hours:', error));
+    
+    function updateCart() {
+        let total = 0, items = [];
+        quantityInputs.forEach(input => {
+            const quantity = parseInt(input.value) || 0;
+            const price = parseFloat(input.dataset.price);
+            const name = input.dataset.name;
+            if (quantity > 0) {
+                const subtotal = quantity * price;
+                total += subtotal;
+                items.push({name, quantity, price, subtotal});
+            }
+        });
+        
+        if (items.length === 0) {
+            cartItemsDiv.innerHTML = '<p class="text-muted text-center"><em>A kosár üres</em></p>';
+            submitButton.disabled = true;
+        } else {
+            let html = '<div style="display: flex; flex-direction: column; gap: var(--space-sm);">';
+            items.forEach(item => {
+                html += '<div class="order-item"><div><div class="order-item-name">' + item.name + '</div><span class="order-item-quantity">' + item.quantity + ' db × ' + item.price + ' Ft</span></div><div class="order-item-price">' + item.subtotal + ' Ft</div></div>';
+            });
+            html += '</div>';
+            cartItemsDiv.innerHTML = html;
+            submitButton.disabled = false;
+        }
+        totalPriceSpan.textContent = total.toLocaleString('hu-HU') + ' Ft';
+    }
+    
+    function formatDateTimeLocal(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hour = String(date.getHours()).padStart(2, '0');
+        const minute = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hour}:${minute}`;
+    }
+    
+    function checkOpeningHours(datetime) {
+        if (!openingHoursData || !datetime) return null;
+        
+        // Check if exceptionally closed
+        if (openingHoursData.rendkivuli_zarva) {
+            return {
+                isOpen: false,
+                message: 'A büfé rendkívüli zárva tart.'
+            };
+        }
+        
+        const selectedDate = new Date(datetime);
+        const weekday = (selectedDate.getDay() + 6) % 7; // Convert Sunday=0 to Monday=0
+        const timeStr = selectedDate.getHours().toString().padStart(2, '0') + ':' + 
+                       selectedDate.getMinutes().toString().padStart(2, '0');
+        
+        // Find matching opening hours
+        const dayHours = openingHoursData.opening_hours.filter(oh => oh.weekday === weekday);
+        
+        if (dayHours.length === 0 || dayHours.some(oh => oh.is_closed)) {
+            return {
+                isOpen: false,
+                message: `A büfé ezen a napon (${getDayName(weekday)}) zárva van.`
+            };
+        }
+        
+        // Check if time is within any opening period
+        for (let oh of dayHours) {
+            if (oh.from_hour && oh.to_hour) {
+                if (timeStr >= oh.from_hour && timeStr <= oh.to_hour) {
+                    return {
+                        isOpen: true,
+                        message: `Nyitva: ${oh.from_hour} - ${oh.to_hour}`
+                    };
+                }
+            }
+        }
+        
+        return {
+            isOpen: false,
+            message: `A büfé ekkor zárva van. Nyitvatartás: ${dayHours.map(oh => oh.from_hour + '-' + oh.to_hour).join(', ')}`
+        };
+    }
+    
+    function getDayName(weekday) {
+        const days = ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap'];
+        return days[weekday] || '';
+    }
+    
+    function validateAndShowWarning() {
+        if (!datetimeInput.value) {
+            openingHoursWarning.style.display = 'none';
+            return;
+        }
+        
+        const result = checkOpeningHours(datetimeInput.value);
+        if (result && !result.isOpen) {
+            openingHoursWarning.textContent = '⚠️ ' + result.message;
+            openingHoursWarning.style.display = 'block';
+        } else {
+            openingHoursWarning.style.display = 'none';
+        }
+    }
+    
+    // Today button - fills in today's date with current time
+    if (todayButton && datetimeInput) {
+        todayButton.addEventListener('click', function() {
+            const now = new Date();
+            // Add 15 minutes to ensure it's in the future
+            now.setMinutes(now.getMinutes() + 15);
+            datetimeInput.value = formatDateTimeLocal(now);
+            validateAndShowWarning();
+        });
+    }
+    
+    // Break selection to datetime field sync
+    if (breakSelect && datetimeInput) {
+        breakSelect.addEventListener('change', function() {
+            const breakTime = this.value;
+            if (breakTime) {
+                const now = new Date();
+                const [hours, minutes] = breakTime.split(':').map(Number);
+                
+                // Create datetime for TODAY at the selected break time
+                let selectedDate = new Date(now);
+                selectedDate.setHours(hours, minutes, 0, 0);
+                
+                // If the time has already passed today (+ 10 min buffer), use tomorrow
+                const minTime = new Date(now.getTime() + 10 * 60000);
+                if (selectedDate < minTime) {
+                    selectedDate.setDate(selectedDate.getDate() + 1);
+                }
+                
+                datetimeInput.value = formatDateTimeLocal(selectedDate);
+                validateAndShowWarning();
+            }
+        });
+    }
+    
+    // Validate on datetime change
+    if (datetimeInput) {
+        datetimeInput.addEventListener('change', validateAndShowWarning);
+        datetimeInput.addEventListener('input', validateAndShowWarning);
+    }
+    
+    // Form submission validation
+    if (orderForm) {
+        orderForm.addEventListener('submit', function(e) {
+            // Check if items are selected
+            let hasItems = false;
+            quantityInputs.forEach(input => {
+                if (parseInt(input.value) > 0) hasItems = true;
+            });
+            
+            if (!hasItems) {
+                e.preventDefault();
+                alert('Kérem válasszon ki legalább egy terméket!');
+                return;
+            }
+            
+            // Check if datetime is filled
+            if (!datetimeInput.value) {
+                e.preventDefault();
+                alert('Kérem adja meg az időzítést!');
+                return;
+            }
+            
+            // Check opening hours
+            const result = checkOpeningHours(datetimeInput.value);
+            if (result && !result.isOpen) {
+                e.preventDefault();
+                if (!confirm('⚠️ ' + result.message + '\n\nBiztosan leadja a rendelést erre az időpontra?')) {
+                    return;
+                }
+            }
+            
+            // Check 10 minute minimum
+            const selectedDate = new Date(datetimeInput.value);
+            const minDate = new Date(Date.now() + 10 * 60000);
+            if (selectedDate < minDate) {
+                e.preventDefault();
+                alert('Az időzítésnek legalább 10 perccel a jelenlegi időpont után kell lennie!');
+                return;
+            }
+        });
+    }
+    
+    // Initialize cart and validation
+    quantityInputs.forEach(input => input.addEventListener('input', updateCart));
+    updateCart();
+    validateAndShowWarning();
+</script>
+{% endif %}
+{% endblock %}

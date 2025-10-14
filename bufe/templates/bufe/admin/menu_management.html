@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Büfé Admin - Menü kezelés</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>🍽️ Menü kezelés</h1>
+                <div class="header-info">
+                    <span class="user-name">{{ user.last_name }} {{ user.first_name }}</span>
+                </div>
+            </div>
+            <nav class="admin-nav">
+                <a href="{% url 'bufe:admin_dashboard' %}" class="nav-link">Rendelések</a>
+                <a href="{% url 'bufe:admin_menu_management' %}" class="nav-link active">Menü kezelés</a>
+                <a href="{% url 'bufe:admin_opening_hours' %}" class="nav-link">Nyitvatartás</a>
+                <a href="{% url 'bufe:index' %}" class="nav-link">Büfé oldal</a>
+                <a href="/logout/" class="nav-link">Kijelentkezés</a>
+            </nav>
+        </header>
+
+        <main class="admin-main">
+            <div class="controls-bar">
+                <h2>Termékek kezelése</h2>
+                <a href="/admin/bufe/termek/add/" class="btn btn-primary" target="_blank">+ Új termék</a>
+            </div>
+
+            <div class="menu-sections">
+                {% for kategoria in kategoriak %}
+                <div class="menu-section">
+                    <h3>{{ kategoria.nev }}</h3>
+                    <div class="products-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Termék</th>
+                                    <th>Ár (Ft)</th>
+                                    <th>Max db</th>
+                                    <th>Elérhető</th>
+                                    <th>Hűtve</th>
+                                    <th>Kisült</th>
+                                    <th>Műveletek</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for termek in kategoria.termekek.all %}
+                                <tr class="product-row {% if not termek.elerheto %}product-unavailable{% endif %}">
+                                    <td>{{ termek.nev }}</td>
+                                    <td>
+                                        <input type="number" class="inline-edit" 
+                                               data-product-id="{{ termek.id }}" 
+                                               data-field="ar" 
+                                               value="{{ termek.ar }}" 
+                                               min="0">
+                                    </td>
+                                    <td>
+                                        <input type="number" class="inline-edit" 
+                                               data-product-id="{{ termek.id }}" 
+                                               data-field="max_rendelesenkent" 
+                                               value="{{ termek.max_rendelesenkent }}" 
+                                               min="1">
+                                    </td>
+                                    <td>
+                                        <label class="switch">
+                                            <input type="checkbox" 
+                                                   data-product-id="{{ termek.id }}" 
+                                                   data-field="elerheto"
+                                                   {% if termek.elerheto %}checked{% endif %}>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="switch">
+                                            <input type="checkbox" 
+                                                   data-product-id="{{ termek.id }}" 
+                                                   data-field="hutve"
+                                                   {% if termek.hutve %}checked{% endif %}>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="switch">
+                                            <input type="checkbox" 
+                                                   data-product-id="{{ termek.id }}" 
+                                                   data-field="kisult"
+                                                   {% if termek.kisult %}checked{% endif %}>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/bufe/termek/{{ termek.id }}/change/" 
+                                           class="btn-action btn-edit" 
+                                           target="_blank">
+                                            ✏️
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="info-box">
+                <p>💡 <strong>Tipp:</strong> A változtatások azonnal mentésre kerülnek. A részletes szerkesztéshez kattints a ceruza ikonra.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/menu_management.js' %}"></script>
+</body>
+</html>
