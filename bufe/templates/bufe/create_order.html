@@ -6,8 +6,21 @@
 
 {% block extra_styles %}
 <style>
+    .order-grid {
+        display: grid;
+        gap: var(--space-lg);
+    }
+    
     @media (min-width: 1024px) {
-        .order-grid { grid-template-columns: 2fr 1fr; }
+        .order-grid {
+            grid-template-columns: 2fr 1fr;
+        }
+    }
+    
+    @media (max-width: 1023px) {
+        .order-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 {% endblock %}
@@ -56,7 +69,7 @@
 
 <form method="post" id="orderForm">
     {% csrf_token %}
-    <div class="order-grid" style="display: grid; gap: var(--space-lg);">
+    <div class="order-grid">
         <div>
             {% if termekek_by_kategoria %}
             {% for kategoria, termekek in termekek_by_kategoria.items %}
@@ -97,9 +110,9 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="{{ form.idozitve.id_for_label }}">{{ form.idozitve.label }} <span style="color: var(--danger);">*</span></label>
-                        <div style="display: flex; gap: var(--space-sm);">
+                        <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
                             {{ form.idozitve }}
-                            <button type="button" class="btn btn-secondary" id="todayButton" title="Mai dátum kitöltése">📅 Ma</button>
+                            <button type="button" class="btn btn-secondary" id="todayButton" title="Mai dátum kitöltése" style="white-space: nowrap;">📅 Ma</button>
                         </div>
                         <small class="text-muted">Legalább 10 perccel a jelenlegi időpont után kell lennie</small>
                         <div id="openingHoursWarning" style="display: none; margin-top: 0.5rem; padding: 0.5rem; background: var(--warning); border-radius: var(--border-radius); color: #000;">

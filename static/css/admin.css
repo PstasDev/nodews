@@ -31,6 +31,12 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 1rem;
+    }
+}
+
 .header-content {
     display: flex;
     justify-content: space-between;
@@ -122,6 +128,18 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .admin-main {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-main {
+        padding: 0.75rem;
+    }
 }
 
 /* Controls Bar */
@@ -246,6 +264,19 @@ body {
     gap: 1.5rem;
 }
 
+@media (max-width: 768px) {
+    .orders-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .orders-grid {
+        gap: 0.75rem;
+    }
+}
+
 .no-orders {
     grid-column: 1 / -1;
     text-align: center;
@@ -291,6 +322,12 @@ body {
     border-bottom: 1px solid #ecf0f1;
 }
 
+@media (max-width: 480px) {
+    .order-header {
+        padding: 0.75rem;
+    }
+}
+
 .order-number {
     font-size: 1.2rem;
     font-weight: 700;
@@ -332,6 +369,12 @@ body {
 
 .order-body {
     padding: 1rem;
+}
+
+@media (max-width: 480px) {
+    .order-body {
+        padding: 0.75rem;
+    }
 }
 
 .order-user {
@@ -383,6 +426,17 @@ body {
     display: flex;
     gap: 0.5rem;
     border-top: 1px solid #ecf0f1;
+}
+
+@media (max-width: 480px) {
+    .order-actions {
+        padding: 0.75rem;
+        flex-direction: column;
+    }
+    
+    .btn-action {
+        width: 100%;
+    }
 }
 
 .btn-action {
@@ -807,5 +861,66 @@ input:checked + .slider:before {
     .products-table th,
     .products-table td {
         padding: 0.5rem;
+    }
+    
+    .filter-tabs {
+        gap: 0.4rem;
+    }
+    
+    .filter-tab {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-header h1 {
+        font-size: 1.25rem;
+    }
+    
+    .controls-left h2 {
+        font-size: 1.25rem;
+    }
+    
+    .order-number {
+        font-size: 1rem;
+    }
+    
+    .order-status {
+        padding: 0.25rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .order-total {
+        font-size: 1.15rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .modal-content {
+        margin: 0.5rem;
+    }
+    
+    .modal-header,
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .menu-section {
+        padding: 1rem;
+    }
+    
+    .opening-hours-table {
+        padding: 1rem;
+    }
+    
+    .toast {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        padding: 0.75rem 1rem;
     }
 }

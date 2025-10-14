@@ -142,6 +142,21 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+# WhiteNoise configuration for static files with Daphne
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# Additional WhiteNoise settings for better performance
+WHITENOISE_USE_FINDERS = True  # Allow serving from STATICFILES_DIRS in development
+WHITENOISE_AUTOREFRESH = config('DEBUG', default=True, cast=bool)  # Auto-refresh in debug mode
+WHITENOISE_MANIFEST_STRICT = False  # Don't fail on missing files in manifest
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

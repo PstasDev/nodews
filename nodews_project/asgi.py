@@ -21,8 +21,18 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from bufe.routing import websocket_urlpatterns
 
+# Wrap Django ASGI app with WhiteNoise for static file serving
+from whitenoise import WhiteNoise
+from django.conf import settings
+
+# Apply WhiteNoise to Django ASGI app for static files
+static_app = WhiteNoise(django_asgi_app, root=settings.STATIC_ROOT, prefix=settings.STATIC_URL)
+# Add additional static file directories
+for directory in settings.STATICFILES_DIRS:
+    static_app.add_files(str(directory), prefix=settings.STATIC_URL)
+
 application = ProtocolTypeRouter({
-    "http": django_asgi_app,
+    "http": static_app,
     "websocket": AuthMiddlewareStack(
         URLRouter(
             websocket_urlpatterns
