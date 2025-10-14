@@ -148,7 +148,9 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        # Use CompressedStaticFilesStorage instead of CompressedManifestStaticFilesStorage
+        # This provides compression without the manifest hassle that causes intermittent 404s
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
@@ -157,6 +159,7 @@ WHITENOISE_USE_FINDERS = True  # Allow serving from STATICFILES_DIRS in developm
 WHITENOISE_AUTOREFRESH = config('DEBUG', default=True, cast=bool)  # Auto-refresh in debug mode
 WHITENOISE_MANIFEST_STRICT = False  # Don't fail on missing files in manifest
 WHITENOISE_ALLOW_ALL_ORIGINS = True  # Allow CORS for static files if needed
+WHITENOISE_MAX_AGE = 31536000 if not config('DEBUG', default=True, cast=bool) else 0  # Cache for 1 year in production
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
