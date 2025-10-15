@@ -23,7 +23,6 @@ def index(request):
                 'name': 'Büfé',
                 'description': 'Iskolai büfé rendelés',
                 'url': '/bufe/',
-                'status': 'Fejlesztés alatt'
             }
         ],
         'user': request.user
@@ -269,3 +268,4 @@ def resend_verification_email(request):
         return redirect('authentication:login')
     
     return redirect('authentication:login')
+
