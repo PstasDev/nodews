@@ -27,7 +27,10 @@
             <div class="navbar-brand">
                 <a href="{% url 'bufe:index' %}" class="select-none"><span>🍽️</span> Büfé</a>
             </div>
-            <ul class="navbar-nav">
+            <button class="navbar-toggle" id="navbar-toggle" aria-label="Toggle navigation">
+                ☰
+            </button>
+            <ul class="navbar-nav" id="navbar-nav">
                 {% block nav_items %}
                 <li><a href="{% url 'bufe:create_order' %}" class="nav-link {% block nav_create_active %}{% endblock %}">Új rendelés</a></li>
                 <li><a href="{% url 'bufe:my_orders' %}" class="nav-link {% block nav_orders_active %}{% endblock %}">Rendeléseim</a></li>

@@ -1,6 +1,34 @@
 // Büfé App JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Mobile Navigation Toggle
+    const navbarToggle = document.getElementById('navbar-toggle');
+    const navbarNav = document.getElementById('navbar-nav');
+    
+    if (navbarToggle && navbarNav) {
+        navbarToggle.addEventListener('click', function() {
+            navbarNav.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link
+        const navLinks = navbarNav.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navbarNav.classList.remove('active');
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideNav = navbarNav.contains(event.target);
+            const isClickOnToggle = navbarToggle.contains(event.target);
+            
+            if (!isClickInsideNav && !isClickOnToggle && navbarNav.classList.contains('active')) {
+                navbarNav.classList.remove('active');
+            }
+        });
+    }
+    
     // Auto-hide alerts after 5 seconds
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
