@@ -136,8 +136,8 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'https://node.szlg.info/__szlg/nodews_static/'
-STATIC_ROOT = '/root/node.szlgbp.info/www/__szlg/nodews_static'
+STATIC_URL = '/static'
+STATIC_ROOT = '/root/ws/staticfiles'  # For production with collectstatic
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
