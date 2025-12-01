@@ -24,11 +24,19 @@ def get_category_emoji(category_name):
     
     # Category emoji mapping
     emoji_map = {
+        # Specific categories from the user request
+        'apróságok': '🍽️',
+        'innivalók': '🥤',
+        'melegételek': '🔥',
+        'pékáru': '🥖',
+        'szendvicsek': '🥪',
+        'ételek': '🍽️',
+        'üdítők': '🥤',
+        
         # Drinks
         'italok': '🥤',
         'ital': '🥤', 
         'üdítő': '🥤',
-        'üdítők': '🥤',
         'szörp': '🧃',
         'szörpök': '🧃',
         'víz': '💧',
@@ -39,7 +47,6 @@ def get_category_emoji(category_name):
         
         # Snacks & Sandwiches  
         'szendvics': '🥪',
-        'szendvicsek': '🥪',
         'szendi': '🥪',
         'sandwich': '🥪',
         'pogácsa': '🥖',

@@ -1122,12 +1122,12 @@ select.form-control {
             </button>
             <ul class="navbar-nav" id="navbar-nav">
                 {% block nav_items %}
-                <li><a href="{% url 'bufe:create_order' %}" class="nav-link {% block nav_create_active %}{% endblock %}">Új rendelés</a></li>
-                <li><a href="{% url 'bufe:my_orders' %}" class="nav-link {% block nav_orders_active %}{% endblock %}">Rendeléseim</a></li>
+                <li><a href="{% url 'bufe:create_order' %}" class="nav-link {% block nav_create_active %}{% endblock %}">🛒 Új rendelés</a></li>
+                <li><a href="{% url 'bufe:my_orders' %}" class="nav-link {% block nav_orders_active %}{% endblock %}">📋 Rendeléseim</a></li>
                 {% if user|is_bufeadmin %}
-                <li><a href="{% url 'bufe:admin_dashboard' %}" class="nav-link {% block nav_admin_active %}{% endblock %}">Admin</a></li>
+                <li><a href="{% url 'bufe:admin_dashboard' %}" class="nav-link {% block nav_admin_active %}{% endblock %}">⚙️ Admin</a></li>
                 {% endif %}
-                <li><a href="{% url 'authentication:logout' %}" class="nav-link">Kijelentkezés</a></li>
+                <li><a href="{% url 'authentication:logout' %}" class="nav-link">🚪 Kijelentkezés</a></li>
                 {% endblock %}
             </ul>
         </div>

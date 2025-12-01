@@ -93,6 +93,26 @@
         max-width: 60px;
     }
     
+    /* Hide default datetime input on mobile, keep custom controls */
+    @media (max-width: 1023px) {
+        /* Hide the default datetime-local input on mobile */
+        input[type="datetime-local"] {
+            display: none;
+        }
+        
+        /* Show the break selector and today button instead */
+        .form-group:has(input[type="datetime-local"]) {
+            position: relative;
+        }
+        
+        .form-group:has(input[type="datetime-local"]) .form-label::after {
+            content: " (válasszon szünetet alább)";
+            font-weight: normal;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+    }
+    
     /* Custom Quantity Controls for Mobile */
     @media (max-width: 1023px) {
         .quantity-control {
