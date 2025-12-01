@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.db import transaction
 import json
-from .utils import domain_required, check_domain_access, get_user_domain, bufeadmin_required, is_bufeadmin, broadcast_order_update
+from .utils import domain_required, check_domain_access, get_user_domain, bufeadmin_required, is_bufeadmin, broadcast_order_update, broadcast_product_update
 from .models import *
 from .forms import RendelesForm
 
@@ -592,6 +592,66 @@ def api_update_product(request):
 @bufeadmin_required
 @csrf_exempt
 @require_http_methods(["POST"])
+def api_add_product(request):
+    """
+    API endpoint to create a new product.
+    """
+    try:
+        data = json.loads(request.body)
+        
+        # Validate required fields
+        required_fields = ['nev', 'kategoria_id', 'ar']
+        for field in required_fields:
+            if not data.get(field):
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Hiányzó kötelező mező: {field}'
+                }, status=400)
+        
+        kategoria = get_object_or_404(Kategoria, id=data['kategoria_id'])
+        
+        # Create new product
+        termek = Termek.objects.create(
+            nev=data['nev'],
+            kategoria=kategoria,
+            ar=int(data['ar']),
+            max_rendelesenkent=int(data.get('max_rendelesenkent', 1)),
+            hutve=bool(data.get('hutve', False)),
+            elerheto=bool(data.get('elerheto', True)),
+            kisult=bool(data.get('kisult', False))
+        )
+        
+        # Broadcast to websocket clients
+        from .utils import broadcast_product_update
+        product_data = {
+            'id': termek.id,
+            'nev': termek.nev,
+            'kategoria_id': termek.kategoria.id,
+            'kategoria_nev': termek.kategoria.nev,
+            'ar': termek.ar,
+            'max_rendelesenkent': termek.max_rendelesenkent,
+            'hutve': termek.hutve,
+            'elerheto': termek.elerheto,
+            'kisult': termek.kisult
+        }
+        broadcast_product_update(product_data, action='add')
+        
+        return JsonResponse({
+            'success': True,
+            'product': product_data
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@login_required
+@bufeadmin_required
+@csrf_exempt
+@require_http_methods(["POST"])
 def api_update_bufe(request):
     """
     API endpoint to update bufe settings (rendkivuli_zarva, etc.).
@@ -619,6 +679,39 @@ def api_update_bufe(request):
                 'nev': bufe.nev,
                 'rendkivuli_zarva': bufe.rendkivuli_zarva
             }
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@login_required
+@bufeadmin_required
+@require_http_methods(["GET"])
+def api_get_categories(request):
+    """
+    API endpoint to get all categories for product creation.
+    """
+    try:
+        bufe = Bufe.objects.first()
+        if not bufe:
+            return JsonResponse({
+                'success': False,
+                'error': 'Büfé nem található'
+            }, status=404)
+        
+        kategoriak = Kategoria.objects.filter(bufe=bufe).order_by('nev')
+        categories_data = [{
+            'id': k.id,
+            'nev': k.nev
+        } for k in kategoriak]
+        
+        return JsonResponse({
+            'success': True,
+            'categories': categories_data
         })
     
     except Exception as e:

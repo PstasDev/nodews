@@ -209,3 +209,26 @@ def broadcast_order_update(order_data, action='new'):
             )
         except Exception as e:
             print(f"Error broadcasting order update: {e}")
+
+
+def broadcast_product_update(product_data, action='update'):
+    """
+    Broadcast product update to all connected bufeadmin WebSocket clients.
+    
+    Args:
+        product_data (dict): Product data to broadcast
+        action (str): Action type - 'add', 'update', 'delete'
+    """
+    channel_layer = get_channel_layer()
+    if channel_layer:
+        try:
+            async_to_sync(channel_layer.group_send)(
+                'bufe_orders',
+                {
+                    'type': 'product_update',
+                    'action': action,
+                    'product': product_data
+                }
+            )
+        except Exception as e:
+            print(f"Error broadcasting product update: {e}")

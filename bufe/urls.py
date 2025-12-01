@@ -26,6 +26,8 @@ urlpatterns = [
     path('admin/api/archive-order/', views.api_archive_order, name='api_archive_order'),
     path('admin/api/archive-all-done/', views.api_archive_all_done, name='api_archive_all_done'),
     path('admin/api/update-product/', views.api_update_product, name='api_update_product'),
+    path('admin/api/add-product/', views.api_add_product, name='api_add_product'),
+    path('admin/api/categories/', views.api_get_categories, name='api_get_categories'),
     path('admin/api/update-bufe/', views.api_update_bufe, name='api_update_bufe'),
     path('admin/api/update-opening-hours/', views.api_update_opening_hours, name='api_update_opening_hours'),
 ]

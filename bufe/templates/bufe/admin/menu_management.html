@@ -707,6 +707,244 @@ body {
     border-color: #3498db;
 }
 
+/* Enhanced table styling */
+.products-table-container {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #ecf0f1;
+}
+
+.products-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.products-table {
+    min-width: 800px;
+}
+
+/* Column specific styling */
+.product-name {
+    width: 25%;
+    min-width: 200px;
+}
+
+.product-price {
+    width: 15%;
+    min-width: 120px;
+}
+
+.product-max {
+    width: 12%;
+    min-width: 100px;
+}
+
+.product-toggle {
+    width: 10%;
+    min-width: 80px;
+    text-align: center;
+}
+
+.product-actions {
+    width: 8%;
+    min-width: 80px;
+    text-align: center;
+}
+
+.product-name-cell {
+    font-weight: 500;
+}
+
+.product-name-text {
+    display: block;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.product-row.product-unavailable .product-name-text {
+    text-decoration: line-through;
+}
+
+/* Enhanced input styling */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.inline-edit {
+    min-width: 60px;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    background: white;
+    transition: all 0.2s;
+}
+
+.inline-edit:hover {
+    border-color: #bdc3c7;
+}
+
+.price-input {
+    text-align: right;
+    padding-right: 0.5rem;
+}
+
+.max-input {
+    text-align: center;
+    max-width: 70px;
+}
+
+.currency,
+.unit {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.product-toggle-cell,
+.product-actions-cell {
+    text-align: center;
+}
+
+/* Add Product Modal */
+.modal.show {
+    display: flex;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ecf0f1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-toggles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ecf0f1;
+}
+
+.form-toggle {
+    display: flex;
+    align-items: center;
+}
+
+.switch-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.switch-text {
+    font-size: 0.9rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* Connection Status */
+.connection-status {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: white;
+    padding: 0.75rem 1rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 500;
+    transition: all 0.3s;
+}
+
+.connection-status.connected {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.connection-status.disconnected {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.connection-status.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.connection-status.connected .status-dot {
+    background: #28a745;
+}
+
+.connection-status.disconnected .status-dot {
+    background: #ffc107;
+}
+
+.connection-status.error .status-dot {
+    background: #dc3545;
+}
+
+/* Flash animation for new products */
+.flash {
+    animation: flashAnimation 0.5s ease-in-out 3;
+}
+
+@keyframes flashAnimation {
+    0%, 100% { 
+        background-color: transparent; 
+    }
+    50% { 
+        background-color: rgba(52, 152, 219, 0.1);
+    }
+}
+
 /* Toggle Switch */
 .switch {
     position: relative;
@@ -832,11 +1070,23 @@ input:checked + .slider:before {
     transform: translateY(100px);
     transition: all 0.3s;
     z-index: 2000;
+    font-weight: 500;
+    font-size: 0.9rem;
+    max-width: 350px;
+    word-wrap: break-word;
 }
 
 .toast.show {
     opacity: 1;
     transform: translateY(0);
+}
+
+.toast-error {
+    background: #e74c3c;
+}
+
+.toast-success {
+    background: #27ae60;
 }
 
 /* Responsive Design */
@@ -960,83 +1210,101 @@ input:checked + .slider:before {
 
         <main class="admin-main">
             <div class="controls-bar">
-                <h2>Termékek kezelése</h2>
-                <a href="/admin/bufe/termek/add/" class="btn btn-primary" target="_blank">+ Új termék</a>
+                <div class="controls-left">
+                    <h2>Termékek kezelése</h2>
+                </div>
+                <div class="controls-right">
+                    <button id="addProductBtn" class="btn btn-primary">+ Új termék</button>
+                    <a href="/admin/bufe/termek/add/" class="btn btn-secondary" target="_blank">Django Admin</a>
+                </div>
             </div>
 
             <div class="menu-sections">
                 {% for kategoria in kategoriak %}
                 <div class="menu-section">
                     <h3>{{ kategoria.nev }}</h3>
-                    <div class="products-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Termék</th>
-                                    <th>Ár (Ft)</th>
-                                    <th>Max db</th>
-                                    <th>Elérhető</th>
-                                    <th>Hűtve</th>
-                                    <th>Kisült</th>
-                                    <th>Műveletek</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for termek in kategoria.termekek.all %}
-                                <tr class="product-row {% if not termek.elerheto %}product-unavailable{% endif %}">
-                                    <td>{{ termek.nev }}</td>
-                                    <td>
-                                        <input type="number" class="inline-edit" 
-                                               data-product-id="{{ termek.id }}" 
-                                               data-field="ar" 
-                                               value="{{ termek.ar }}" 
-                                               min="0">
-                                    </td>
-                                    <td>
-                                        <input type="number" class="inline-edit" 
-                                               data-product-id="{{ termek.id }}" 
-                                               data-field="max_rendelesenkent" 
-                                               value="{{ termek.max_rendelesenkent }}" 
-                                               min="1">
-                                    </td>
-                                    <td>
-                                        <label class="switch">
-                                            <input type="checkbox" 
-                                                   data-product-id="{{ termek.id }}" 
-                                                   data-field="elerheto"
-                                                   {% if termek.elerheto %}checked{% endif %}>
-                                            <span class="slider"></span>
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label class="switch">
-                                            <input type="checkbox" 
-                                                   data-product-id="{{ termek.id }}" 
-                                                   data-field="hutve"
-                                                   {% if termek.hutve %}checked{% endif %}>
-                                            <span class="slider"></span>
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <label class="switch">
-                                            <input type="checkbox" 
-                                                   data-product-id="{{ termek.id }}" 
-                                                   data-field="kisult"
-                                                   {% if termek.kisult %}checked{% endif %}>
-                                            <span class="slider"></span>
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <a href="/admin/bufe/termek/{{ termek.id }}/change/" 
-                                           class="btn-action btn-edit" 
-                                           target="_blank">
-                                            ✏️
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="products-table-container">
+                        <div class="products-table-wrapper">
+                            <table class="products-table">
+                                <thead>
+                                    <tr>
+                                        <th class="product-name">Termék</th>
+                                        <th class="product-price">Ár (Ft)</th>
+                                        <th class="product-max">Max db</th>
+                                        <th class="product-toggle">Elérhető</th>
+                                        <th class="product-toggle">Hűtve</th>
+                                        <th class="product-toggle">Kisült</th>
+                                        <th class="product-actions">Műveletek</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-tbody-{{ kategoria.id }}">
+                                    {% for termek in kategoria.termekek.all %}
+                                    <tr class="product-row {% if not termek.elerheto %}product-unavailable{% endif %}" data-product-id="{{ termek.id }}">
+                                        <td class="product-name-cell">
+                                            <span class="product-name-text">{{ termek.nev }}</span>
+                                        </td>
+                                        <td class="product-price-cell">
+                                            <div class="input-wrapper">
+                                                <input type="number" class="inline-edit price-input" 
+                                                       data-product-id="{{ termek.id }}" 
+                                                       data-field="ar" 
+                                                       value="{{ termek.ar }}" 
+                                                       min="0"
+                                                       step="10">
+                                                <span class="currency">Ft</span>
+                                            </div>
+                                        </td>
+                                        <td class="product-max-cell">
+                                            <div class="input-wrapper">
+                                                <input type="number" class="inline-edit max-input" 
+                                                       data-product-id="{{ termek.id }}" 
+                                                       data-field="max_rendelesenkent" 
+                                                       value="{{ termek.max_rendelesenkent }}" 
+                                                       min="1"
+                                                       max="10">
+                                                <span class="unit">db</span>
+                                            </div>
+                                        </td>
+                                        <td class="product-toggle-cell">
+                                            <label class="switch">
+                                                <input type="checkbox" 
+                                                       data-product-id="{{ termek.id }}" 
+                                                       data-field="elerheto"
+                                                       {% if termek.elerheto %}checked{% endif %}>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="product-toggle-cell">
+                                            <label class="switch">
+                                                <input type="checkbox" 
+                                                       data-product-id="{{ termek.id }}" 
+                                                       data-field="hutve"
+                                                       {% if termek.hutve %}checked{% endif %}>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="product-toggle-cell">
+                                            <label class="switch">
+                                                <input type="checkbox" 
+                                                       data-product-id="{{ termek.id }}" 
+                                                       data-field="kisult"
+                                                       {% if termek.kisult %}checked{% endif %}>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </td>
+                                        <td class="product-actions-cell">
+                                            <a href="/admin/bufe/termek/{{ termek.id }}/change/" 
+                                               class="btn-action btn-edit" 
+                                               target="_blank"
+                                               title="Szerkesztés">
+                                                ✏️
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -1048,117 +1316,640 @@ input:checked + .slider:before {
         </main>
     </div>
 
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Új termék hozzáadása</h3>
+                <button id="addProductModalClose" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="productName">Termék neve *</label>
+                        <input type="text" id="productName" name="nev" required class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productCategory">Kategória *</label>
+                        <select id="productCategory" name="kategoria_id" required class="form-select">
+                            <option value="">Válassz kategóriát...</option>
+                            {% for kategoria in kategoriak %}
+                            <option value="{{ kategoria.id }}">{{ kategoria.nev }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productPrice">Ár (Ft) *</label>
+                            <input type="number" id="productPrice" name="ar" min="0" step="10" required class="form-input">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="productMax">Max rendelés (db)</label>
+                            <input type="number" id="productMax" name="max_rendelesenkent" min="1" max="10" value="1" class="form-input">
+                        </div>
+                    </div>
+                    
+                    <div class="form-toggles">
+                        <div class="form-toggle">
+                            <label class="switch-label">
+                                <input type="checkbox" id="productElerheto" name="elerheto" checked>
+                                <span class="switch-text">Elérhető</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-toggle">
+                            <label class="switch-label">
+                                <input type="checkbox" id="productHutve" name="hutve">
+                                <span class="switch-text">Hűtve</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-toggle">
+                            <label class="switch-label">
+                                <input type="checkbox" id="productKisult" name="kisult">
+                                <span class="switch-text">Kisült</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="addProductCancel" class="btn btn-secondary">Mégse</button>
+                <button type="submit" id="addProductSubmit" class="btn btn-primary">Termék hozzáadása</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection status for WebSocket -->
+    <div id="connectionStatus" class="connection-status disconnected">
+        <span class="status-dot"></span>
+        <span class="status-text">Kapcsolódás...</span>
+    </div>
 
     <script>
-/**
- * Menu Management - Product editing (inline due to static file handling issue)
- */
+        // Pass categories data to JavaScript
+        window.CATEGORIES = [
+            {% for kategoria in kategoriak %}
+            {
+                id: {{ kategoria.id }},
+                nev: "{{ kategoria.nev|escapejs }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
 
-document.addEventListener('DOMContentLoaded', () => {
-    setupProductEditing();
-});
+        /**
+         * Menu Management - Product editing (inline due to static file handling issue)
+         */
 
-function setupProductEditing() {
-    // Handle inline text/number edits
-    document.querySelectorAll('.inline-edit').forEach(input => {
-        input.addEventListener('change', async (e) => {
-            const productId = e.target.dataset.productId;
-            const field = e.target.dataset.field;
-            const value = e.target.value;
-            
-            await updateProduct(productId, { [field]: value });
+        // Configuration
+        const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const WS_HOST = window.location.host;
+        const WS_URL = `${WS_PROTOCOL}//${WS_HOST}/ws/bufe/orders/`;
+
+        // State
+        let ws = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+        let categories = window.CATEGORIES || [];
+
+        // DOM Elements
+        const addProductBtn = document.getElementById('addProductBtn');
+        const addProductModal = document.getElementById('addProductModal');
+        const addProductModalClose = document.getElementById('addProductModalClose');
+        const addProductForm = document.getElementById('addProductForm');
+        const addProductSubmit = document.getElementById('addProductSubmit');
+        const addProductCancel = document.getElementById('addProductCancel');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initWebSocket();
+            setupProductEditing();
+            setupAddProductModal();
         });
-    });
-    
-    // Handle checkbox toggles
-    document.querySelectorAll('input[type="checkbox"][data-product-id]').forEach(checkbox => {
-        checkbox.addEventListener('change', async (e) => {
-            const productId = e.target.dataset.productId;
-            const field = e.target.dataset.field;
-            const value = e.target.checked;
-            
-            await updateProduct(productId, { [field]: value });
-        });
-    });
-}
 
-async function updateProduct(productId, data) {
-    try {
-        const response = await fetch('/bufe/admin/api/update-product/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                product_id: productId,
-                ...data
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showSuccessMessage('Mentve');
-        } else {
-            alert('Hiba: ' + result.error);
-        }
-    } catch (error) {
-        console.error('Failed to update product:', error);
-        alert('Hiba történt a termék frissítése során.');
-    }
-}
-
-function showSuccessMessage(message) {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 2000);
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+        // WebSocket Functions
+        function initWebSocket() {
+            try {
+                ws = new WebSocket(WS_URL);
+                
+                ws.onopen = () => {
+                    console.log('WebSocket connected');
+                    updateConnectionStatus('connected');
+                    reconnectAttempts = 0;
+                };
+                
+                ws.onmessage = (event) => {
+                    handleWebSocketMessage(JSON.parse(event.data));
+                };
+                
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                    updateConnectionStatus('error');
+                };
+                
+                ws.onclose = () => {
+                    console.log('WebSocket disconnected');
+                    updateConnectionStatus('disconnected');
+                    scheduleReconnect();
+                };
+            } catch (error) {
+                console.error('Failed to initialize WebSocket:', error);
+                updateConnectionStatus('error');
             }
         }
-    }
-    return cookieValue;
-}
 
-function getCSRFToken() {
-    let token = getCookie('csrftoken');
-    if (!token) {
-        const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
-        if (csrfInput) {
-            token = csrfInput.value;
+        function handleWebSocketMessage(data) {
+            console.log('WebSocket message:', data);
+            
+            switch (data.type) {
+                case 'product_update':
+                    if (data.action === 'add') {
+                        addProductToTable(data.product);
+                        showSuccessMessage('Új termék hozzáadva!');
+                    }
+                    break;
+                case 'add_product_response':
+                    handleAddProductResponse(data);
+                    break;
+                case 'pong':
+                    // Heartbeat response
+                    break;
+                case 'error':
+                    console.error('WebSocket error:', data.message);
+                    break;
+            }
         }
-    }
-    if (!token) {
-        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-        if (csrfMeta) {
-            token = csrfMeta.content;
+
+        function scheduleReconnect() {
+            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                reconnectAttempts++;
+                const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+                console.log(`Reconnecting in ${delay}ms (attempt ${reconnectAttempts})`);
+                
+                setTimeout(() => {
+                    initWebSocket();
+                }, delay);
+            } else {
+                console.error('Max reconnection attempts reached');
+                updateConnectionStatus('error');
+            }
         }
-    }
-    return token;
-}
+
+        function updateConnectionStatus(status) {
+            if (!connectionStatus) return;
+            const statusText = connectionStatus.querySelector('.status-text');
+            
+            connectionStatus.className = 'connection-status';
+            
+            switch (status) {
+                case 'connected':
+                    connectionStatus.classList.add('connected');
+                    statusText.textContent = 'Kapcsolódva';
+                    break;
+                case 'disconnected':
+                    connectionStatus.classList.add('disconnected');
+                    statusText.textContent = 'Kapcsolat megszakadt';
+                    break;
+                case 'error':
+                    connectionStatus.classList.add('error');
+                    statusText.textContent = 'Kapcsolódási hiba';
+                    break;
+            }
+        }
+
+        function setupProductEditing() {
+            // Handle inline text/number edits
+            document.querySelectorAll('.inline-edit').forEach(input => {
+                input.addEventListener('change', async (e) => {
+                    const productId = e.target.dataset.productId;
+                    const field = e.target.dataset.field;
+                    const value = e.target.value;
+                    
+                    await updateProduct(productId, { [field]: value });
+                });
+                
+                // Auto-save on blur for better UX
+                input.addEventListener('blur', (e) => {
+                    if (e.target.dataset.changed) {
+                        e.target.dispatchEvent(new Event('change'));
+                        delete e.target.dataset.changed;
+                    }
+                });
+                
+                // Mark as changed on input
+                input.addEventListener('input', (e) => {
+                    e.target.dataset.changed = 'true';
+                });
+            });
+            
+            // Handle checkbox toggles
+            document.querySelectorAll('input[type="checkbox"][data-product-id]').forEach(checkbox => {
+                checkbox.addEventListener('change', async (e) => {
+                    const productId = e.target.dataset.productId;
+                    const field = e.target.dataset.field;
+                    const value = e.target.checked;
+                    
+                    await updateProduct(productId, { [field]: value });
+                });
+            });
+        }
+
+        async function updateProduct(productId, data) {
+            try {
+                const response = await fetch('/bufe/admin/api/update-product/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        ...data
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessMessage('Mentve');
+                    
+                    // Update row styling if availability changed
+                    if ('elerheto' in data) {
+                        const row = document.querySelector(`[data-product-id="${productId}"]`);
+                        if (row) {
+                            if (data.elerheto) {
+                                row.classList.remove('product-unavailable');
+                            } else {
+                                row.classList.add('product-unavailable');
+                            }
+                        }
+                    }
+                } else {
+                    showErrorMessage('Hiba: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Failed to update product:', error);
+                showErrorMessage('Hiba történt a termék frissítése során.');
+            }
+        }
+
+        // Add Product Modal
+        function setupAddProductModal() {
+            if (!addProductBtn) return;
+            
+            addProductBtn.addEventListener('click', () => {
+                showAddProductModal();
+            });
+            
+            addProductModalClose.addEventListener('click', () => {
+                hideAddProductModal();
+            });
+            
+            addProductCancel.addEventListener('click', () => {
+                hideAddProductModal();
+            });
+            
+            addProductSubmit.addEventListener('click', (e) => {
+                e.preventDefault();
+                submitAddProduct();
+            });
+            
+            // Close modal on outside click
+            addProductModal.addEventListener('click', (e) => {
+                if (e.target === addProductModal) {
+                    hideAddProductModal();
+                }
+            });
+            
+            // Form validation
+            const requiredFields = addProductForm.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                field.addEventListener('input', validateForm);
+            });
+        }
+
+        function showAddProductModal() {
+            addProductModal.classList.add('show');
+            
+            // Focus on first input
+            const firstInput = addProductForm.querySelector('input[type="text"]');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+        }
+
+        function hideAddProductModal() {
+            addProductModal.classList.remove('show');
+            addProductForm.reset();
+            clearFormErrors();
+        }
+
+        function validateForm() {
+            const requiredFields = addProductForm.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                }
+            });
+            
+            addProductSubmit.disabled = !isValid;
+            return isValid;
+        }
+
+        function clearFormErrors() {
+            addProductForm.querySelectorAll('.form-error').forEach(error => {
+                error.remove();
+            });
+            addProductForm.querySelectorAll('.error').forEach(field => {
+                field.classList.remove('error');
+            });
+        }
+
+        async function submitAddProduct() {
+            if (!validateForm()) {
+                showErrorMessage('Kérjük, töltse ki a kötelező mezőket!');
+                return;
+            }
+            
+            const formData = new FormData(addProductForm);
+            const productData = {
+                nev: formData.get('nev'),
+                kategoria_id: parseInt(formData.get('kategoria_id')),
+                ar: parseInt(formData.get('ar')),
+                max_rendelesenkent: parseInt(formData.get('max_rendelesenkent')) || 1,
+                hutve: formData.has('hutve'),
+                elerheto: formData.has('elerheto'),
+                kisult: formData.has('kisult')
+            };
+            
+            // Disable submit button
+            addProductSubmit.disabled = true;
+            addProductSubmit.textContent = 'Hozzáadás...';
+            
+            try {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    // Use WebSocket for real-time update
+                    ws.send(JSON.stringify({
+                        type: 'add_product',
+                        ...productData
+                    }));
+                } else {
+                    // Fallback to REST API
+                    await addProductViaAPI(productData);
+                }
+            } catch (error) {
+                console.error('Error adding product:', error);
+                showErrorMessage('Hiba történt a termék hozzáadása során.');
+                
+                // Re-enable submit button
+                addProductSubmit.disabled = false;
+                addProductSubmit.textContent = 'Termék hozzáadása';
+            }
+        }
+
+        async function addProductViaAPI(productData) {
+            const response = await fetch('/bufe/admin/api/add-product/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(productData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                addProductToTable(result.product);
+                hideAddProductModal();
+                showSuccessMessage('Termék sikeresen hozzáadva!');
+            } else {
+                throw new Error(result.error);
+            }
+        }
+
+        function handleAddProductResponse(data) {
+            // Re-enable submit button
+            addProductSubmit.disabled = false;
+            addProductSubmit.textContent = 'Termék hozzáadása';
+            
+            if (data.success) {
+                hideAddProductModal();
+            } else {
+                showErrorMessage(data.error);
+            }
+        }
+
+        function addProductToTable(product) {
+            const categoryId = product.kategoria_id;
+            const tbody = document.getElementById(`products-tbody-${categoryId}`);
+            
+            if (!tbody) {
+                console.warn('Category tbody not found for:', categoryId);
+                // Refresh page if category not found
+                setTimeout(() => location.reload(), 1000);
+                return;
+            }
+            
+            const row = createProductRow(product);
+            tbody.appendChild(row);
+            
+            // Setup event listeners for the new row
+            setupProductRowEvents(row);
+            
+            // Highlight new row
+            row.classList.add('flash');
+            setTimeout(() => row.classList.remove('flash'), 2000);
+        }
+
+        function createProductRow(product) {
+            const row = document.createElement('tr');
+            row.className = `product-row ${product.elerheto ? '' : 'product-unavailable'}`;
+            row.dataset.productId = product.id;
+            
+            row.innerHTML = `
+                <td class="product-name-cell">
+                    <span class="product-name-text">${escapeHtml(product.nev)}</span>
+                </td>
+                <td class="product-price-cell">
+                    <div class="input-wrapper">
+                        <input type="number" class="inline-edit price-input" 
+                               data-product-id="${product.id}" 
+                               data-field="ar" 
+                               value="${product.ar}" 
+                               min="0"
+                               step="10">
+                        <span class="currency">Ft</span>
+                    </div>
+                </td>
+                <td class="product-max-cell">
+                    <div class="input-wrapper">
+                        <input type="number" class="inline-edit max-input" 
+                               data-product-id="${product.id}" 
+                               data-field="max_rendelesenkent" 
+                               value="${product.max_rendelesenkent}" 
+                               min="1"
+                               max="10">
+                        <span class="unit">db</span>
+                    </div>
+                </td>
+                <td class="product-toggle-cell">
+                    <label class="switch">
+                        <input type="checkbox" 
+                               data-product-id="${product.id}" 
+                               data-field="elerheto"
+                               ${product.elerheto ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </td>
+                <td class="product-toggle-cell">
+                    <label class="switch">
+                        <input type="checkbox" 
+                               data-product-id="${product.id}" 
+                               data-field="hutve"
+                               ${product.hutve ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </td>
+                <td class="product-toggle-cell">
+                    <label class="switch">
+                        <input type="checkbox" 
+                               data-product-id="${product.id}" 
+                               data-field="kisult"
+                               ${product.kisult ? 'checked' : ''}>
+                        <span class="slider"></span>
+                    </label>
+                </td>
+                <td class="product-actions-cell">
+                    <a href="/admin/bufe/termek/${product.id}/change/" 
+                       class="btn-action btn-edit" 
+                       target="_blank"
+                       title="Szerkesztés">
+                        ✏️
+                    </a>
+                </td>
+            `;
+            
+            return row;
+        }
+
+        function setupProductRowEvents(row) {
+            // Setup inline editing
+            row.querySelectorAll('.inline-edit').forEach(input => {
+                input.addEventListener('change', async (e) => {
+                    const productId = e.target.dataset.productId;
+                    const field = e.target.dataset.field;
+                    const value = e.target.value;
+                    
+                    await updateProduct(productId, { [field]: value });
+                });
+                
+                input.addEventListener('blur', (e) => {
+                    if (e.target.dataset.changed) {
+                        e.target.dispatchEvent(new Event('change'));
+                        delete e.target.dataset.changed;
+                    }
+                });
+                
+                input.addEventListener('input', (e) => {
+                    e.target.dataset.changed = 'true';
+                });
+            });
+            
+            // Setup toggles
+            row.querySelectorAll('input[type="checkbox"][data-product-id]').forEach(checkbox => {
+                checkbox.addEventListener('change', async (e) => {
+                    const productId = e.target.dataset.productId;
+                    const field = e.target.dataset.field;
+                    const value = e.target.checked;
+                    
+                    await updateProduct(productId, { [field]: value });
+                });
+            });
+        }
+
+        // UI Helper Functions
+        function showSuccessMessage(message) {
+            showToast(message, 'success');
+        }
+
+        function showErrorMessage(message) {
+            showToast(message, 'error');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, type === 'error' ? 4000 : 2000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function getCSRFToken() {
+            let token = getCookie('csrftoken');
+            if (!token) {
+                const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfInput) {
+                    token = csrfInput.value;
+                }
+            }
+            if (!token) {
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                if (csrfMeta) {
+                    token = csrfMeta.content;
+                }
+            }
+            return token;
+        }
+
+        // Heartbeat to keep connection alive
+        setInterval(() => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'ping' }));
+            }
+        }, 30000); // Every 30 seconds
     </script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 {% extends 'bufe/base.html' %}
+{% load bufe_extras %}
 
 {% block title %}Új rendelés - Büfé{% endblock %}
 {% block meta_description %}Új rendelés leadása{% endblock %}
@@ -20,6 +21,262 @@
     @media (max-width: 1023px) {
         .order-grid {
             grid-template-columns: 1fr;
+        }
+        
+        body {
+            padding-bottom: 120px; /* Space for fixed bottom cart */
+        }
+    }
+
+    /* Category Navigation */
+    .category-nav {
+        position: sticky;
+        top: calc(var(--navbar-height, 60px));
+        z-index: 100;
+        background: var(--white);
+        border-bottom: 2px solid var(--gray-200);
+        padding: var(--space-md) 0;
+        margin-bottom: var(--space-lg);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .category-nav::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .category-nav-list {
+        display: flex;
+        gap: var(--space-sm);
+        padding: 0 var(--space-md);
+        min-width: max-content;
+    }
+    
+    .category-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 70px;
+        height: 70px;
+        background: var(--gray-100);
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        color: var(--gray-700);
+        transition: all var(--transition);
+        padding: var(--space-xs);
+    }
+    
+    .category-nav-item.active {
+        background: var(--brand-accent);
+        border-color: var(--brand-accent);
+        color: var(--white);
+    }
+    
+    .category-nav-emoji {
+        font-size: 1.75rem;
+        line-height: 1;
+        margin-bottom: var(--space-xs);
+    }
+    
+    .category-nav-text {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 60px;
+    }
+    
+    /* Custom Quantity Controls for Mobile */
+    @media (max-width: 1023px) {
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-top: var(--space-sm);
+        }
+        
+        .quantity-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: var(--brand-accent);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition);
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        .quantity-btn:hover:not(:disabled) {
+            background: #965f38;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .quantity-btn:disabled {
+            background: var(--gray-300);
+            color: var(--gray-500);
+            cursor: not-allowed;
+        }
+        
+        .quantity-input {
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+            border: 2px solid var(--gray-300);
+            padding: var(--space-sm);
+        }
+        
+        .quantity-input:focus {
+            border-color: var(--brand-accent);
+        }
+        
+        /* Hide default number input on mobile */
+        .form-group:has(.quantity-input) .form-label {
+            display: none;
+        }
+        
+        .form-group:has(.quantity-input) {
+            margin-bottom: 0;
+        }
+    }
+    
+    /* Fixed Bottom Cart for Mobile */
+    @media (max-width: 1023px) {
+        .mobile-cart {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-top: 3px solid var(--brand-accent);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            padding: var(--space-md);
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform var(--transition);
+        }
+        
+        .mobile-cart.active {
+            transform: translateY(0);
+        }
+        
+        .mobile-cart-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-md);
+        }
+        
+        .mobile-cart-info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+        
+        .mobile-cart-items {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        .mobile-cart-total {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--brand-accent);
+        }
+        
+        .mobile-cart-btn {
+            flex-shrink: 0;
+            min-width: 120px;
+        }
+        
+        /* Hide desktop cart on mobile */
+        .order-grid > div:last-child {
+            display: none;
+        }
+    }
+    
+    /* Desktop - hide mobile elements */
+    @media (min-width: 1024px) {
+        .category-nav {
+            display: none;
+        }
+        
+        .mobile-cart {
+            display: none;
+        }
+        
+        .quantity-control {
+            display: none;
+        }
+    }
+    
+    /* Smooth scrolling for anchors */
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 140px;
+    }
+    
+    /* Touch improvements */
+    @media (max-width: 1023px) {
+        .product-card {
+            position: relative;
+            transition: transform 0.1s ease;
+        }
+        
+        .product-card:active {
+            transform: scale(0.98);
+        }
+        
+        /* Better touch targets */
+        .category-nav-item {
+            -webkit-tap-highlight-color: rgba(168, 110, 67, 0.2);
+        }
+        
+        .quantity-btn {
+            -webkit-tap-highlight-color: rgba(168, 110, 67, 0.3);
+            -webkit-touch-callout: none;
+        }
+        
+        /* Improve scrolling performance */
+        .category-nav {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+        
+        /* Loading state for mobile cart */
+        .mobile-cart.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        /* Better spacing for product info on mobile */
+        .product-card {
+            padding: var(--space-lg);
+        }
+        
+        .product-name {
+            font-size: 1.0625rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .product-price {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-md);
         }
     }
 </style>
@@ -54,6 +311,20 @@
     </div>
 </div>
 
+<!-- Category Navigation for Mobile -->
+{% if termekek_by_kategoria %}
+<nav class="category-nav">
+    <div class="category-nav-list">
+        {% for kategoria, termekek in termekek_by_kategoria.items %}
+        <a href="#kategoria-{{ kategoria.id }}" class="category-nav-item" data-category="{{ kategoria.id }}">
+            <span class="category-nav-emoji">{{ kategoria.nev|get_category_emoji }}</span>
+            <span class="category-nav-text">{{ kategoria.nev }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</nav>
+{% endif %}
+
 {% if not is_open %}
 <div class="alert alert-warning">
     <span style="font-size: 1.5rem;">⚠️</span>
@@ -73,8 +344,8 @@
         <div>
             {% if termekek_by_kategoria %}
             {% for kategoria, termekek in termekek_by_kategoria.items %}
-            <div class="card mb-lg">
-                <div class="card-header"><h3 style="margin:0;">{{ kategoria.nev }}</h3></div>
+            <div class="card mb-lg" id="kategoria-{{ kategoria.id }}">
+                <div class="card-header"><h3 style="margin:0;">{{ kategoria.nev|get_category_emoji }} {{ kategoria.nev }}</h3></div>
                 <div class="card-body">
                     <div class="grid grid-2">
                         {% for termek in termekek %}
@@ -90,6 +361,12 @@
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="quantity_{{ termek.id }}">Mennyiség</label>
                                 <input type="number" name="quantity_{{ termek.id }}" id="quantity_{{ termek.id }}" class="form-control quantity-input" min="0" max="{{ termek.max_rendelesenkent }}" value="0" data-price="{{ termek.ar }}" data-name="{{ termek.nev }}">
+                                <!-- Mobile Quantity Control -->
+                                <div class="quantity-control">
+                                    <button type="button" class="quantity-btn" data-action="decrease" data-target="quantity_{{ termek.id }}">−</button>
+                                    <span class="quantity-display" id="display_{{ termek.id }}">0</span>
+                                    <button type="button" class="quantity-btn" data-action="increase" data-target="quantity_{{ termek.id }}" data-max="{{ termek.max_rendelesenkent }}">+</button>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -163,6 +440,19 @@
         {% endif %}
     </div>
 </form>
+
+<!-- Mobile Fixed Bottom Cart -->
+<div class="mobile-cart" id="mobileCart">
+    <div class="mobile-cart-content">
+        <div class="mobile-cart-info">
+            <div class="mobile-cart-items" id="mobileCartItems">Kosár üres</div>
+            <div class="mobile-cart-total" id="mobileCartTotal">0 Ft</div>
+        </div>
+        <button type="submit" form="orderForm" class="btn btn-accent btn-lg mobile-cart-btn" id="mobileSubmitButton" disabled>
+            Rendelés leadása
+        </button>
+    </div>
+</div>
 {% endif %}
 {% endblock %}
 
@@ -375,10 +665,228 @@
         });
     }
     
-    // Initialize cart and validation
+    // Mobile quantity controls
+    function setupMobileQuantityControls() {
+        const quantityButtons = document.querySelectorAll('.quantity-btn');
+        
+        quantityButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Add visual feedback
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+                
+                const action = this.dataset.action;
+                const targetId = this.dataset.target;
+                const input = document.getElementById(targetId);
+                const display = document.getElementById('display_' + targetId.split('_')[1]);
+                
+                if (!input || !display) return;
+                
+                let currentValue = parseInt(input.value) || 0;
+                const max = parseInt(input.getAttribute('max')) || 999;
+                const min = parseInt(input.getAttribute('min')) || 0;
+                
+                if (action === 'increase' && currentValue < max) {
+                    currentValue++;
+                } else if (action === 'decrease' && currentValue > min) {
+                    currentValue--;
+                }
+                
+                input.value = currentValue;
+                display.textContent = currentValue;
+                
+                // Update button states
+                updateQuantityButtonStates(targetId, currentValue, min, max);
+                
+                // Trigger cart update with slight delay for better UX
+                setTimeout(() => {
+                    input.dispatchEvent(new Event('input'));
+                }, 50);
+            });
+            
+            // Add touch feedback
+            button.addEventListener('touchstart', function(e) {
+                this.style.backgroundColor = '#965f38';
+            });
+            
+            button.addEventListener('touchend', function(e) {
+                setTimeout(() => {
+                    if (!this.disabled) {
+                        this.style.backgroundColor = '';
+                    }
+                }, 150);
+            });
+        });
+        
+        // Function to update button states
+        function updateQuantityButtonStates(targetId, currentValue, min = 0, max = 999) {
+            const decreaseBtn = document.querySelector(`[data-action="decrease"][data-target="${targetId}"]`);
+            const increaseBtn = document.querySelector(`[data-action="increase"][data-target="${targetId}"]`);
+            
+            if (decreaseBtn) {
+                decreaseBtn.disabled = currentValue <= min;
+                decreaseBtn.style.opacity = currentValue <= min ? '0.4' : '1';
+            }
+            if (increaseBtn) {
+                increaseBtn.disabled = currentValue >= max;
+                increaseBtn.style.opacity = currentValue >= max ? '0.4' : '1';
+            }
+        }
+        
+        // Sync displays with inputs on page load
+        quantityInputs.forEach(input => {
+            const productId = input.id.split('_')[1];
+            const display = document.getElementById('display_' + productId);
+            const currentValue = parseInt(input.value) || 0;
+            const min = parseInt(input.getAttribute('min')) || 0;
+            const max = parseInt(input.getAttribute('max')) || 999;
+            
+            if (display) {
+                display.textContent = currentValue;
+            }
+            
+            updateQuantityButtonStates(input.id, currentValue, min, max);
+            
+            // Also listen to direct input changes to sync display
+            input.addEventListener('input', function() {
+                const newValue = parseInt(this.value) || 0;
+                if (display) {
+                    display.textContent = newValue;
+                }
+                updateQuantityButtonStates(this.id, newValue, min, max);
+            });
+        });
+    }
+    
+    // Category navigation active state
+    function updateCategoryNavigation() {
+        const navItems = document.querySelectorAll('.category-nav-item');
+        const sections = document.querySelectorAll('[id^="kategoria-"]');
+        
+        function setActiveNav() {
+            let current = '';
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 200) {
+                    current = section.id;
+                }
+            });
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                const categoryId = item.dataset.category;
+                if (current === `kategoria-${categoryId}`) {
+                    item.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', setActiveNav);
+        setActiveNav();
+    }
+    
+    // Mobile cart functionality
+    function updateMobileCart() {
+        const mobileCart = document.getElementById('mobileCart');
+        const mobileCartItems = document.getElementById('mobileCartItems');
+        const mobileCartTotal = document.getElementById('mobileCartTotal');
+        const mobileSubmitButton = document.getElementById('mobileSubmitButton');
+        
+        if (!mobileCart) return;
+        
+        let total = 0, itemCount = 0;
+        const items = [];
+        
+        quantityInputs.forEach(input => {
+            const quantity = parseInt(input.value) || 0;
+            const price = parseFloat(input.dataset.price);
+            const name = input.dataset.name;
+            if (quantity > 0) {
+                total += quantity * price;
+                itemCount += quantity;
+                items.push({ name, quantity });
+            }
+        });
+        
+        if (itemCount > 0) {
+            mobileCart.classList.add('active');
+            
+            // Create more detailed item text
+            let itemText = '';
+            if (items.length === 1) {
+                itemText = `${items[0].quantity}x ${items[0].name}`;
+                if (itemText.length > 25) {
+                    itemText = `${itemCount} termék`;
+                }
+            } else if (items.length <= 3) {
+                itemText = `${itemCount} termék (${items.length} féle)`;
+            } else {
+                itemText = `${itemCount} termék (${items.length} féle)`;
+            }
+            
+            mobileCartItems.textContent = itemText;
+            mobileCartTotal.textContent = total.toLocaleString('hu-HU') + ' Ft';
+            mobileSubmitButton.disabled = false;
+            
+            // Add subtle animation when cart updates
+            mobileCart.style.transform = 'translateY(-5px)';
+            setTimeout(() => {
+                mobileCart.style.transform = '';
+            }, 200);
+        } else {
+            mobileCart.classList.remove('active');
+            mobileCartItems.textContent = 'Kosár üres';
+            mobileCartTotal.textContent = '0 Ft';
+            mobileSubmitButton.disabled = true;
+        }
+    }
+    
+    // Enhanced updateCart function
+    function updateCart() {
+        let total = 0, items = [];
+        quantityInputs.forEach(input => {
+            const quantity = parseInt(input.value) || 0;
+            const price = parseFloat(input.dataset.price);
+            const name = input.dataset.name;
+            if (quantity > 0) {
+                const subtotal = quantity * price;
+                total += subtotal;
+                items.push({name, quantity, price, subtotal});
+            }
+        });
+        
+        if (items.length === 0) {
+            cartItemsDiv.innerHTML = '<p class="text-muted text-center"><em>A kosár üres</em></p>';
+            submitButton.disabled = true;
+        } else {
+            let html = '<div style="display: flex; flex-direction: column; gap: var(--space-sm);">';
+            items.forEach(item => {
+                html += '<div class="order-item"><div><div class="order-item-name">' + item.name + '</div><span class="order-item-quantity">' + item.quantity + ' db × ' + item.price + ' Ft</span></div><div class="order-item-price">' + item.subtotal + ' Ft</div></div>';
+            });
+            html += '</div>';
+            cartItemsDiv.innerHTML = html;
+            submitButton.disabled = false;
+        }
+        totalPriceSpan.textContent = total.toLocaleString('hu-HU') + ' Ft';
+        
+        // Update mobile cart
+        updateMobileCart();
+    }
+    
+    // Initialize everything
     quantityInputs.forEach(input => input.addEventListener('input', updateCart));
     updateCart();
     validateAndShowWarning();
+    
+    // Initialize mobile features on mobile devices
+    if (window.innerWidth <= 1023) {
+        setupMobileQuantityControls();
+        updateCategoryNavigation();
+    }
 </script>
 {% endif %}
 {% endblock %}
