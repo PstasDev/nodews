@@ -403,6 +403,61 @@ body {
     margin-bottom: 0.8rem;
 }
 
+.order-times-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    padding: 0.6rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.time-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.time-label {
+    font-weight: 600;
+    color: #7f8c8d;
+    min-width: 85px;
+}
+
+.time-value {
+    color: #2c3e50;
+}
+
+.timer {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: #3498db;
+}
+
+.timer.elapsed {
+    color: #95a5a6;
+}
+
+.timer.countdown {
+    color: #e74c3c;
+}
+
+.timer.countdown.soon {
+    color: #f39c12;
+    animation: pulse-timer 1s infinite;
+}
+
+.timer.countdown.ready {
+    color: #27ae60;
+}
+
+@keyframes pulse-timer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
 .order-items-preview {
     display: flex;
     flex-wrap: wrap;
@@ -1448,6 +1503,38 @@ function createOrderCard(order) {
     const moreItems = order.items.length > 3 ? 
         `<span class="item-badge">+${order.items.length - 3} további</span>` : '';
     
+    // Build times display with timers
+    const leadvaDate = new Date(order.leadva);
+    const leadvaFormatted = formatDateTime(order.leadva);
+    
+    let timesHtml = `
+        <div class="order-times-container">
+            <div class="time-row">
+                <span class="time-label">📥 Leadva:</span>
+                <span class="time-value">${leadvaFormatted}</span>
+            </div>
+            <div class="time-row">
+                <span class="time-label">⏱️ Eltelt idő:</span>
+                <span class="timer elapsed" data-order-id="${order.id}" data-type="elapsed">${calculateElapsedTime(leadvaDate)}</span>
+            </div>`;
+    
+    if (order.idozitve) {
+        const idozitveDate = new Date(order.idozitve);
+        const idozitveFormatted = formatDateTime(order.idozitve);
+        
+        timesHtml += `
+            <div class="time-row">
+                <span class="time-label">🕒 Időzítve:</span>
+                <span class="time-value">${idozitveFormatted}</span>
+            </div>
+            <div class="time-row">
+                <span class="time-label">⏰ Hátralevő:</span>
+                <span class="timer countdown" data-order-id="${order.id}" data-type="countdown" data-scheduled="${order.idozitve}">${calculateCountdown(idozitveDate)}</span>
+            </div>`;
+    }
+    
+    timesHtml += `</div>`;
+    
     let actions = '';
     if (order.allapot === 'leadva') {
         actions = `
@@ -1484,7 +1571,7 @@ function createOrderCard(order) {
             </div>
             <div class="order-body">
                 <div class="order-user"><strong>${order.user.full_name}</strong></div>
-                <div class="order-time">${formatDateTime(order.leadva)}</div>
+                ${timesHtml}
                 <div class="order-items-preview">${itemsPreview}${moreItems}</div>
                 <div class="order-total">${order.vegosszeg} Ft</div>
                 ${order.megjegyzes ? `<div class="order-note">💬 ${order.megjegyzes}</div>` : ''}
@@ -1533,6 +1620,24 @@ function showOrderDetails(orderId) {
         </tr>
     `).join('');
     
+    const leadvaDate = new Date(order.leadva);
+    const elapsedTime = calculateElapsedTime(leadvaDate);
+    
+    let scheduledSection = '';
+    if (order.idozitve) {
+        const idozitveDate = new Date(order.idozitve);
+        const countdownTime = calculateCountdown(idozitveDate);
+        scheduledSection = `
+            <div class="detail-row">
+                <span class="detail-label">Időzítve:</span>
+                <span class="detail-value">${formatDateTime(order.idozitve)}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Hátralevő idő:</span>
+                <span class="detail-value timer countdown">${countdownTime}</span>
+            </div>`;
+    }
+    
     const modalBody = document.getElementById('modalBody');
     modalBody.innerHTML = `
         <div class="order-detail">
@@ -1552,6 +1657,11 @@ function showOrderDetails(orderId) {
                 <span class="detail-label">Leadva:</span>
                 <span class="detail-value">${formatDateTime(order.leadva)}</span>
             </div>
+            <div class="detail-row">
+                <span class="detail-label">Eltelt idő:</span>
+                <span class="detail-value timer elapsed">${elapsedTime}</span>
+            </div>
+            ${scheduledSection}
             <div class="detail-row">
                 <span class="detail-label">Állapot:</span>
                 <span class="detail-value status-${order.allapot}">${order.allapot_display}</span>
@@ -1701,6 +1811,71 @@ function formatDateTime(dateString) {
     return `${year}.${month}.${day} ${hours}:${minutes}`;
 }
 
+function calculateElapsedTime(startDate) {
+    const now = new Date();
+    const diff = Math.floor((now - startDate) / 1000); // difference in seconds
+    
+    const hours = Math.floor(diff / 3600);
+    const minutes = Math.floor((diff % 3600) / 60);
+    const seconds = diff % 60;
+    
+    if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    } else {
+        return `${minutes}:${String(seconds).padStart(2, '0')}`;
+    }
+}
+
+function calculateCountdown(scheduledDate) {
+    const now = new Date();
+    const diff = Math.floor((scheduledDate - now) / 1000); // difference in seconds
+    
+    if (diff <= 0) {
+        return "IDŐZÍTÉS LEJÁRT!";
+    }
+    
+    const hours = Math.floor(diff / 3600);
+    const minutes = Math.floor((diff % 3600) / 60);
+    const seconds = diff % 60;
+    
+    if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    } else {
+        return `${minutes}:${String(seconds).padStart(2, '0')}`;
+    }
+}
+
+function updateAllTimers() {
+    // Update elapsed timers
+    document.querySelectorAll('.timer.elapsed').forEach(timer => {
+        const orderId = parseInt(timer.dataset.orderId);
+        const order = orders.get(orderId);
+        if (order) {
+            const leadvaDate = new Date(order.leadva);
+            timer.textContent = calculateElapsedTime(leadvaDate);
+        }
+    });
+    
+    // Update countdown timers
+    document.querySelectorAll('.timer.countdown').forEach(timer => {
+        const scheduledDate = new Date(timer.dataset.scheduled);
+        const countdownText = calculateCountdown(scheduledDate);
+        timer.textContent = countdownText;
+        
+        // Update styling based on time remaining
+        const now = new Date();
+        const diff = Math.floor((scheduledDate - now) / 1000);
+        
+        timer.classList.remove('soon', 'ready');
+        
+        if (diff <= 0) {
+            timer.classList.add('ready');
+        } else if (diff <= 300) { // 5 minutes or less
+            timer.classList.add('soon');
+        }
+    });
+}
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -1747,6 +1922,11 @@ setInterval(() => {
         ws.send(JSON.stringify({ type: 'ping' }));
     }
 }, 30000); // Every 30 seconds
+
+// Update all timers every second
+setInterval(() => {
+    updateAllTimers();
+}, 1000); // Every second
     </script>
 </body>
 </html>
